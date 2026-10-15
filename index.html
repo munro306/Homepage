@@ -1,8 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>Andrew's Live Dashboard</title>
 <style>
 :root{--bg:#07111f;--card:#101d2c;--line:#20364d;--muted:#9bacbd;--text:#f7fbff;--green:#34d399}
@@ -15,53 +16,52 @@
 .webcam-card{grid-column:1/-1}.finance-tile{height:360px;background:#f6d777;color:#111827;border-radius:12px;padding:10px;overflow:auto}.finance-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-weight:800}.finance-title small{font-size:9px;font-weight:600}.finance-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:3px 4px;font-size:11px;white-space:nowrap}.finance-row span{min-width:0}.finance-row strong{margin-left:auto;text-align:right;font-size:12px;white-space:nowrap}.finance-row input{width:100px;border:0;border-bottom:1px dashed #89722b;background:transparent;text-align:right;font:inherit;color:#111827}.finance-row.dynamic{background:#ffeaa1;border-radius:6px}.finance-total{font-weight:900;border-top:1px solid #8d7730;margin-top:3px;padding-top:5px}.finance-split{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px}.finance-stat{background:#e8c751;border-radius:7px;padding:7px;font-size:10px}.finance-stat strong{display:block;font-size:14px;margin-top:2px}.finance-property{margin-top:8px;border-top:2px solid #8d7730;padding-top:8px}.net-worth-row{font-size:15px}.finance-note{font-size:9px;margin-top:6px;color:#5d4a13}.bottom-grid{display:grid;grid-template-columns:.5fr 1fr 1.5fr;gap:12px}.finance-tile,.webcam-tile,.placeholder-tile{min-width:0}.cam-label{margin:0 0 7px;font-size:14px;color:#d9e7f3;font-weight:700}.video{width:100%;height:335px;background:#000;border-radius:12px;overflow:hidden}.placeholder-tile{height:360px;border:1px dashed #39536b;border-radius:12px;background:#0c1927;display:flex;align-items:center;justify-content:center;text-align:center;color:#7890a6}.placeholder-tile strong{color:#a9bbca;font-size:18px}.placeholder-tile span{font-size:12px}.ticker-stack{margin-top:12px;display:grid;gap:6px}.ticker{height:36px;display:flex;align-items:center;overflow:hidden;background:#0c1927;border:1px solid #20364d;border-radius:9px}.ticker-label{height:100%;display:flex;align-items:center;padding:0 12px;font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;z-index:2;flex:0 0 auto;cursor:pointer}.ticker.news .ticker-label{background:#2563eb}.ticker.sports .ticker-label{background:#dc2626}.ticker.business .ticker-label{background:#059669}.ticker-window{overflow:hidden;flex:1;min-width:0;padding:0 14px}.ticker-track{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:600;opacity:1;transition:opacity 1.2s ease}.ticker-track.is-fading{opacity:0}.ticker-track a{color:#f7fbff;text-decoration:none}.ticker-track a:hover{text-decoration:underline}.ticker:hover .ticker-track{opacity:.72}.footer{color:#6f8497;font-size:11px;margin-top:9px}
 @media(max-width:1100px){.grid{grid-template-columns:1fr 1fr}.stock{grid-column:1/-1}.webcam-card{grid-column:1/-1}.finance-tile{height:360px;background:#f6d777;color:#111827;border-radius:12px;padding:10px;overflow:auto}.finance-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-weight:800}.finance-title small{font-size:9px;font-weight:600}.finance-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:3px 4px;font-size:11px;white-space:nowrap}.finance-row span{min-width:0}.finance-row strong{margin-left:auto;text-align:right;font-size:12px;white-space:nowrap}.finance-row input{width:100px;border:0;border-bottom:1px dashed #89722b;background:transparent;text-align:right;font:inherit;color:#111827}.finance-row.dynamic{background:#ffeaa1;border-radius:6px}.finance-total{font-weight:900;border-top:1px solid #8d7730;margin-top:3px;padding-top:5px}.finance-split{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px}.finance-stat{background:#e8c751;border-radius:7px;padding:7px;font-size:10px}.finance-stat strong{display:block;font-size:14px;margin-top:2px}.finance-property{margin-top:8px;border-top:2px solid #8d7730;padding-top:8px}.net-worth-row{font-size:15px}.finance-note{font-size:9px;margin-top:6px;color:#5d4a13}.calendar-card{min-height:430px}}@media(max-width:900px){.bottom-grid{grid-template-columns:1fr}.placeholder-tile{height:260px}}@media(max-width:720px){.grid{grid-template-columns:1fr}.stock,.webcam-card{grid-column:auto}.forecast{grid-template-columns:repeat(4,1fr)}}
 </style>
-</head>
+<style>
+/* Dashboard layout: 1/2 + 1/4 + 1/4, then equal thirds */
+main.grid{display:grid!important;grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:12px!important}
+main.grid>.stock{grid-column:span 6!important}
+main.grid>.finance-card{grid-column:span 3!important}
+main.grid>.weather-card{grid-column:span 3!important}
+main.grid>.webcam-card,main.grid>.calendar-card,main.grid>.placeholder-card{grid-column:span 4!important}
+.finance-card{padding:14px}.finance-card .finance-tile{height:100%;min-height:360px;overflow:auto}
+main.grid>.webcam-card,main.grid>.calendar-card,main.grid>.placeholder-card{min-height:380px}
+.webcam-card .video{height:335px}.placeholder-card{padding:14px}.placeholder-card .placeholder-tile{height:100%;min-height:350px}
+.calendar-card{padding:14px}.calendar-card .calendar-frame{min-height:350px}
+@media(max-width:1100px){main.grid>.stock{grid-column:span 12!important}main.grid>.finance-card,main.grid>.weather-card{grid-column:span 6!important}main.grid>.webcam-card,main.grid>.calendar-card,main.grid>.placeholder-card{grid-column:span 4!important}}
+@media(max-width:800px){main.grid>*{grid-column:span 12!important}}
+</style></head>
 <body>
 <div class="wrap">
-  <div class="top"><div class="kicker">Andrew's live dashboard</div><div><span class="muted">Mountain time&nbsp;</span><span id="clock" class="clock">--:--</span></div></div>
-  <main class="grid">
-    <section class="card stock">
-      
-      <div class="alm-live"><iframe title="ALM live quote" src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22NASDAQ%3AALM%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22locale%22%3A%22en%22%2C%22width%22%3A%22100%25%22%7D"></iframe></div>
-      <div class="note" style="margin:0 0 8px">Holding: <strong>153,101 shares</strong>. Daily holding change = 153,101 × daily $ change shown above.</div>
-      <div class="quote"><iframe title="ALM chart" src="https://s.tradingview.com/widgetembed/?symbol=NASDAQ%3AALM&interval=D&hidesidetoolbar=1&symboledit=0&saveimage=0&toolbarbg=f1f3f6&theme=light&style=1&timezone=America%2FNew_York&withdateranges=1&hideideas=1" allowfullscreen></iframe></div>
-      <div class="note">Market data may be delayed. <a class="stockLink" href="https://www.nasdaq.com/market-activity/stocks/alm" target="_blank" rel="noopener">Open ALM on Nasdaq</a></div>
-    </section>
-    <section class="card calendar-card">
-      
-      <iframe class="calendar-frame" title="Google family calendar" src="https://calendar.google.com/calendar/embed?src=munro306%40gmail.com&src=rv2p0s9k59nvjup00q2547dq7m366oh2%40import.calendar.google.com&src=c2e1fbb3ea22fd05c19e62cfb07b2d767a2c7fd039aea7cb8d3485bd4f713494%40group.calendar.google.com&src=77e989c1kdkdvr3vo647o4kbor562sjs%40import.calendar.google.com&src=01rb59pdu2n7o15fctsu4qon9htalmg4%40import.calendar.google.com&src=ehs8067n96jguldfs26759pajfeafldo%40import.calendar.google.com&src=kq8v9ib8o07nss1oqdmlu48nvbmhivl5%40import.calendar.google.com&ctz=America%2FRegina" frameborder="0" scrolling="no" loading="lazy"></iframe>
-    </section>
-    <section class="card weather-card">
-      <div class="weather-city"><h3>Regina, Saskatchewan</h3><div id="reginaLoading" class="weather-loading">Loading weather…</div><div id="reginaWeather" style="display:none"></div><div id="reginaError" class="error"></div></div>
-      <div class="weather-city"><h3>Canmore, Alberta</h3><div id="canmoreLoading" class="weather-loading">Loading weather…</div><div id="canmoreWeather" style="display:none"></div><div id="canmoreError" class="error"></div></div>
-    </section>
-    <section class="card webcam-card">
-      
-      <div class="bottom-grid">
-        <div class="finance-tile">
-          <div class="finance-row"><span>Almonty</span><strong>$2,109,689</strong></div>
-          <div class="finance-row"><span>PEPP</span><strong>$1,002,196</strong></div>
-          <div class="finance-row"><span>Wolf RRSP</span><strong>$684,507</strong></div>
-          <div class="finance-row"><span>Wolf Mrkt</span><strong>$133,648</strong></div>
-          <div class="finance-row"><span>N-Reg. Fun</span><strong>$12,060</strong></div>
-          <div class="finance-row"><span>GRRSP</span><strong>$15,617</strong></div>
-          <div class="finance-row"><span>RESP</span><strong>$111,393</strong></div>
-          <div class="finance-row"><span>ITF</span><strong>$23,158</strong></div>
-          <div class="finance-row finance-total"><span>Savings</span><strong>$3,957,718</strong></div>
-          <div class="finance-row finance-property"><span>Canmore</span><strong>$319,000</strong></div>
-          <div class="finance-row finance-total net-worth-row"><span>Net Worth</span><strong>$4,276,718</strong></div>
-        </div>
-        <div class="webcam-tile"><div class="cam-label">Ha Ling Peak · Drake Pub and Inn</div><div class="video"><iframe title="Ha Ling Peak live webcam" src="https://www.youtube.com/embed/RdRmXqnBZ-c?autoplay=1&mute=1&playsinline=1&rel=0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div></div>
-        <div class="placeholder-tile"><div><strong>Placeholder</strong><br><span>Reserved for future dashboard content</span></div></div>
-      </div>
-    </section>
-  </main>
-  <div class="ticker-stack" aria-label="Live information headlines">
-    <div class="ticker news"><div class="ticker-label">News</div><div class="ticker-window"><div id="newsTicker" class="ticker-track"><span>Loading live CBC News headlines…</span></div></div></div>
-    <div class="ticker sports"><div class="ticker-label">Sports</div><div class="ticker-window"><div id="sportsTicker" class="ticker-track"><span>Loading live CBC Sports headlines…</span></div></div></div>
-    <div class="ticker business"><div class="ticker-label">Business</div><div class="ticker-window"><div id="businessTicker" class="ticker-track"><span>Loading live CBC Business headlines…</span></div></div></div>
-  </div>
-  <div class="footer">Weather and live feeds refresh every 15 minutes. Headlines fade to the next item every 10 seconds; click a label to refresh.</div>
+<div class="top"><div class="kicker">Andrew's live dashboard</div><div><span class="muted">Mountain time </span><span class="clock" id="clock">--:--</span></div></div>
+<main class="grid"><section class="card stock">
+<div class="alm-live"><iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22NASDAQ%3AALM%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22locale%22%3A%22en%22%2C%22width%22%3A%22100%25%22%7D" title="ALM live quote"></iframe></div>
+<div class="note" style="margin:0 0 8px">Holding: <strong>153,101 shares</strong>. Daily holding change = 153,101 × daily $ change shown above.</div>
+<div class="quote"><iframe allowfullscreen="" src="https://s.tradingview.com/widgetembed/?symbol=NASDAQ%3AALM&amp;interval=D&amp;hidesidetoolbar=1&amp;symboledit=0&amp;saveimage=0&amp;toolbarbg=f1f3f6&amp;theme=light&amp;style=1&amp;timezone=America%2FNew_York&amp;withdateranges=1&amp;hideideas=1" title="ALM chart"></iframe></div>
+<div class="note">Market data may be delayed. <a class="stockLink" href="https://www.nasdaq.com/market-activity/stocks/alm" rel="noopener" target="_blank">Open ALM on Nasdaq</a></div>
+</section><section class="card finance-card"><div class="finance-tile">
+<div class="finance-row"><span>Almonty</span><strong>$2,109,689</strong></div>
+<div class="finance-row"><span>PEPP</span><strong>$1,002,196</strong></div>
+<div class="finance-row"><span>Wolf RRSP</span><strong>$684,507</strong></div>
+<div class="finance-row"><span>Wolf Mrkt</span><strong>$133,648</strong></div>
+<div class="finance-row"><span>N-Reg. Fun</span><strong>$12,060</strong></div>
+<div class="finance-row"><span>GRRSP</span><strong>$15,617</strong></div>
+<div class="finance-row"><span>RESP</span><strong>$111,393</strong></div>
+<div class="finance-row"><span>ITF</span><strong>$23,158</strong></div>
+<div class="finance-row finance-total"><span>Savings</span><strong>$3,957,718</strong></div>
+<div class="finance-row finance-property"><span>Canmore</span><strong>$319,000</strong></div>
+<div class="finance-row finance-total net-worth-row"><span>Net Worth</span><strong>$4,276,718</strong></div>
+</div></section><section class="card weather-card">
+<div class="weather-city"><h3>Regina, Saskatchewan</h3><div class="weather-loading" id="reginaLoading">Loading weather…</div><div id="reginaWeather" style="display:none"></div><div class="error" id="reginaError"></div></div>
+<div class="weather-city"><h3>Canmore, Alberta</h3><div class="weather-loading" id="canmoreLoading">Loading weather…</div><div id="canmoreWeather" style="display:none"></div><div class="error" id="canmoreError"></div></div>
+</section><section class="card webcam-card"><div class="webcam-tile"><div class="cam-label">Ha Ling Peak · Drake Pub and Inn</div><div class="video"><iframe allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen="" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/RdRmXqnBZ-c?autoplay=1&amp;mute=1&amp;playsinline=1&amp;rel=0" title="Ha Ling Peak live webcam"></iframe></div></div></section><section class="card calendar-card">
+<iframe class="calendar-frame" frameborder="0" loading="lazy" scrolling="no" src="https://calendar.google.com/calendar/embed?src=munro306%40gmail.com&amp;src=rv2p0s9k59nvjup00q2547dq7m366oh2%40import.calendar.google.com&amp;src=c2e1fbb3ea22fd05c19e62cfb07b2d767a2c7fd039aea7cb8d3485bd4f713494%40group.calendar.google.com&amp;src=77e989c1kdkdvr3vo647o4kbor562sjs%40import.calendar.google.com&amp;src=01rb59pdu2n7o15fctsu4qon9htalmg4%40import.calendar.google.com&amp;src=ehs8067n96jguldfs26759pajfeafldo%40import.calendar.google.com&amp;src=kq8v9ib8o07nss1oqdmlu48nvbmhivl5%40import.calendar.google.com&amp;ctz=America%2FRegina" title="Google family calendar"></iframe>
+</section><section class="card placeholder-card"><div class="placeholder-tile"><div><strong>Placeholder</strong><br/><span>Reserved for future dashboard content</span></div></div></section></main>
+<div aria-label="Live information headlines" class="ticker-stack">
+<div class="ticker news"><div class="ticker-label">News</div><div class="ticker-window"><div class="ticker-track" id="newsTicker"><span>Loading live CBC News headlines…</span></div></div></div>
+<div class="ticker sports"><div class="ticker-label">Sports</div><div class="ticker-window"><div class="ticker-track" id="sportsTicker"><span>Loading live CBC Sports headlines…</span></div></div></div>
+<div class="ticker business"><div class="ticker-label">Business</div><div class="ticker-window"><div class="ticker-track" id="businessTicker"><span>Loading live CBC Business headlines…</span></div></div></div>
+</div>
+<div class="footer">Weather and live feeds refresh every 15 minutes. Headlines fade to the next item every 10 seconds; click a label to refresh.</div>
 </div>
 <script>
 const weatherMap={0:['Clear','☀️'],1:['Mainly clear','🌤️'],2:['Partly cloudy','⛅'],3:['Overcast','☁️'],45:['Fog','🌫️'],48:['Rime fog','🌫️'],51:['Drizzle','🌦️'],53:['Drizzle','🌦️'],55:['Heavy drizzle','🌧️'],61:['Light rain','🌦️'],63:['Rain','🌧️'],65:['Heavy rain','🌧️'],71:['Light snow','🌨️'],73:['Snow','❄️'],75:['Heavy snow','❄️'],80:['Rain showers','🌦️'],81:['Rain showers','🌧️'],82:['Heavy showers','⛈️'],85:['Snow showers','🌨️'],86:['Heavy snow showers','❄️'],95:['Thunderstorm','⛈️']};
