@@ -72,8 +72,8 @@ main.grid>.webcam-card,main.grid>.calendar-card,main.grid>.placeholder-card{grid
 </div></section><section class="card weather-card">
 <div class="weather-city"><h3>Regina, Saskatchewan</h3><div class="weather-loading" id="reginaLoading">Loading weather…</div><div id="reginaWeather" style="display:none"></div><div class="error" id="reginaError"></div></div>
 <div class="weather-city"><h3>Canmore, Alberta</h3><div class="weather-loading" id="canmoreLoading">Loading weather…</div><div id="canmoreWeather" style="display:none"></div><div class="error" id="canmoreError"></div></div>
-</section><section class="card top-placeholder-card"><div class="placeholder-tile"><div><strong>Placeholder</strong><br/><span>Reserved for future dashboard content</span></div></div></section><section class="card webcam-card"><div class="webcam-tile"><div class="cam-label">Ha Ling Peak · Drake Pub and Inn</div><div class="video"><iframe allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen="" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/RdRmXqnBZ-c?autoplay=1&amp;mute=1&amp;playsinline=1&amp;rel=0" title="Ha Ling Peak live webcam"></iframe></div></div></section><section class="card calendar-card">
-<iframe class="calendar-frame" frameborder="0" loading="lazy" scrolling="no" src="https://calendar.google.com/calendar/embed?src=munro306%40gmail.com&amp;src=rv2p0s9k59nvjup00q2547dq7m366oh2%40import.calendar.google.com&amp;src=c2e1fbb3ea22fd05c19e62cfb07b2d767a2c7fd039aea7cb8d3485bd4f713494%40group.calendar.google.com&amp;src=77e989c1kdkdvr3vo647o4kbor562sjs%40import.calendar.google.com&amp;src=01rb59pdu2n7o15fctsu4qon9htalmg4%40import.calendar.google.com&amp;src=ehs8067n96jguldfs26759pajfeafldo%40import.calendar.google.com&amp;src=kq8v9ib8o07nss1oqdmlu48nvbmhivl5%40import.calendar.google.com&amp;ctz=America%2FRegina" title="Google family calendar"></iframe>
+</section><section class="card top-placeholder-card"><div class="placeholder-tile"><div><strong>Placeholder</strong><br/><span>Reserved for future dashboard content</span></div></div></section><section class="card webcam-card"><div class="webcam-tile"><div class="cam-label">Ha Ling Peak · Drake Pub and Inn</div><div class="video"><iframe allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen="" data-src="https://www.youtube.com/embed/RdRmXqnBZ-c?autoplay=1&amp;mute=1&amp;playsinline=1&amp;rel=0" id="halingWebcamFrame" name="halingWebcamFrame" referrerpolicy="strict-origin-when-cross-origin" src="about:blank" title="Ha Ling Peak live webcam"></iframe></div></div></section><section class="card calendar-card">
+<iframe class="calendar-frame" data-src="https://calendar.google.com/calendar/embed?src=munro306%40gmail.com&amp;src=rv2p0s9k59nvjup00q2547dq7m366oh2%40import.calendar.google.com&amp;src=c2e1fbb3ea22fd05c19e62cfb07b2d767a2c7fd039aea7cb8d3485bd4f713494%40group.calendar.google.com&amp;src=77e989c1kdkdvr3vo647o4kbor562sjs%40import.calendar.google.com&amp;src=01rb59pdu2n7o15fctsu4qon9htalmg4%40import.calendar.google.com&amp;src=ehs8067n96jguldfs26759pajfeafldo%40import.calendar.google.com&amp;src=kq8v9ib8o07nss1oqdmlu48nvbmhivl5%40import.calendar.google.com&amp;ctz=America%2FRegina" frameborder="0" id="familyCalendarFrame" name="familyCalendarFrame" scrolling="no" src="about:blank" title="Google family calendar"></iframe>
 </section><section class="card placeholder-card"><div class="placeholder-tile"><div><strong>Placeholder</strong><br/><span>Reserved for future dashboard content</span></div></div></section></main>
 <div aria-label="Live information headlines" class="ticker-stack">
 <div class="ticker news"><div class="ticker-label">News</div><div class="ticker-window"><div class="ticker-track" id="newsTicker"><span>Loading live CBC News headlines…</span></div></div></div>
@@ -125,5 +125,13 @@ document.querySelectorAll('.ticker').forEach(t=>t.querySelector('.ticker-label')
 
 
 </script>
-</body>
+<script>
+// Force correct iframe sources (prevents browsers restoring old webcam into the calendar tile)
+window.addEventListener('load',function(){
+  ['familyCalendarFrame','halingWebcamFrame'].forEach(function(id){
+    var f=document.getElementById(id);
+    if(f&&f.dataset.src){f.src=f.dataset.src;}
+  });
+});
+</script></body>
 </html>
