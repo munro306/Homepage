@@ -17,18 +17,28 @@
 @media(max-width:1100px){.grid{grid-template-columns:1fr 1fr}.stock{grid-column:1/-1}.webcam-card{grid-column:1/-1}.finance-tile{height:360px;background:#f6d777;color:#111827;border-radius:12px;padding:10px;overflow:auto}.finance-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-weight:800}.finance-title small{font-size:9px;font-weight:600}.finance-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:3px 4px;font-size:11px;white-space:nowrap}.finance-row span{min-width:0}.finance-row strong{margin-left:auto;text-align:right;font-size:12px;white-space:nowrap}.finance-row input{width:100px;border:0;border-bottom:1px dashed #89722b;background:transparent;text-align:right;font:inherit;color:#111827}.finance-row.dynamic{background:#ffeaa1;border-radius:6px}.finance-total{font-weight:900;border-top:1px solid #8d7730;margin-top:3px;padding-top:5px}.finance-split{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px}.finance-stat{background:#e8c751;border-radius:7px;padding:7px;font-size:10px}.finance-stat strong{display:block;font-size:14px;margin-top:2px}.finance-property{margin-top:8px;border-top:2px solid #8d7730;padding-top:8px}.net-worth-row{font-size:15px}.finance-note{font-size:9px;margin-top:6px;color:#5d4a13}.calendar-card{min-height:430px}}@media(max-width:900px){.bottom-grid{grid-template-columns:1fr}.placeholder-tile{height:260px}}@media(max-width:720px){.grid{grid-template-columns:1fr}.stock,.webcam-card{grid-column:auto}.forecast{grid-template-columns:repeat(4,1fr)}}
 </style>
 <style>
-/* Dashboard layout: 1/2 + 1/4 + 1/4, then equal thirds */
-main.grid{display:grid!important;grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:12px!important}
-main.grid>.stock{grid-column:span 6!important}
-main.grid>.finance-card{grid-column:span 3!important}
-main.grid>.weather-card{grid-column:span 3!important}
-main.grid>.webcam-card,main.grid>.calendar-card,main.grid>.placeholder-card{grid-column:span 4!important}
-.finance-card{padding:14px}.finance-card .finance-tile{height:100%;min-height:360px;overflow:auto}
-main.grid>.webcam-card,main.grid>.calendar-card,main.grid>.placeholder-card{min-height:380px}
-.webcam-card .video{height:335px}.placeholder-card{padding:14px}.placeholder-card .placeholder-tile{height:100%;min-height:350px}
-.calendar-card{padding:14px}.calendar-card .calendar-frame{min-height:350px}
-@media(max-width:1100px){main.grid>.stock{grid-column:span 12!important}main.grid>.finance-card,main.grid>.weather-card{grid-column:span 6!important}main.grid>.webcam-card,main.grid>.calendar-card,main.grid>.placeholder-card{grid-column:span 4!important}}
-@media(max-width:800px){main.grid>*{grid-column:span 12!important}}
+/* Top row: ALM 1/2, placeholder 1/8, finance 1/8, weather 1/4. Second row: equal thirds. */
+main.grid{display:grid!important;grid-template-columns:repeat(24,minmax(0,1fr))!important;gap:12px!important}
+main.grid>.stock{grid-column:span 12!important}
+main.grid>.top-placeholder-card,main.grid>.finance-card{grid-column:span 3!important}
+main.grid>.weather-card{grid-column:span 6!important}
+main.grid>.webcam-card,main.grid>.placeholder-card{grid-column:span 8!important;min-height:380px}
+.top-placeholder-card,.finance-card,.webcam-card,.placeholder-card{padding:14px;min-width:0}
+.top-placeholder-card .placeholder-tile,.finance-card .finance-tile{height:100%;min-height:360px}
+.finance-card .finance-tile{overflow:auto;padding:7px}
+.finance-card .finance-row{gap:4px;padding:3px 0;font-size:9px}
+.finance-card .finance-row strong{font-size:9px}
+.webcam-card .video{height:335px}
+.placeholder-card .placeholder-tile{height:100%;min-height:350px}
+@media(max-width:1250px){main.grid>.stock{grid-column:span 24!important}main.grid>.top-placeholder-card,main.grid>.finance-card{grid-column:span 6!important}main.grid>.weather-card{grid-column:span 12!important}main.grid>.webcam-card,main.grid>.placeholder-card{grid-column:span 8!important}}
+@media(max-width:800px){main.grid>*{grid-column:span 24!important}}
+</style><style>
+/* Second row: Ha Ling Peak webcam, Google Calendar, placeholder */
+main.grid>.webcam-card,main.grid>.calendar-card,main.grid>.placeholder-card{grid-column:span 8!important;min-height:380px}
+main.grid>.calendar-card{padding:14px}
+main.grid>.calendar-card .calendar-frame{width:100%;height:100%;min-height:350px;border:0;border-radius:12px;background:#fff;display:block}
+@media(max-width:1250px){main.grid>.webcam-card,main.grid>.calendar-card,main.grid>.placeholder-card{grid-column:span 8!important}}
+@media(max-width:800px){main.grid>.calendar-card{grid-column:span 24!important}}
 </style></head>
 <body>
 <div class="wrap">
@@ -38,7 +48,7 @@ main.grid>.webcam-card,main.grid>.calendar-card,main.grid>.placeholder-card{min-
 <div class="note" style="margin:0 0 8px">Holding: <strong>153,101 shares</strong>. Daily holding change = 153,101 × daily $ change shown above.</div>
 <div class="quote"><iframe allowfullscreen="" src="https://s.tradingview.com/widgetembed/?symbol=NASDAQ%3AALM&amp;interval=D&amp;hidesidetoolbar=1&amp;symboledit=0&amp;saveimage=0&amp;toolbarbg=f1f3f6&amp;theme=light&amp;style=1&amp;timezone=America%2FNew_York&amp;withdateranges=1&amp;hideideas=1" title="ALM chart"></iframe></div>
 <div class="note">Market data may be delayed. <a class="stockLink" href="https://www.nasdaq.com/market-activity/stocks/alm" rel="noopener" target="_blank">Open ALM on Nasdaq</a></div>
-</section><section class="card finance-card"><div class="finance-tile">
+</section><section class="card top-placeholder-card"><div class="placeholder-tile"><div><strong>Placeholder</strong><br/><span>Reserved for future dashboard content</span></div></div></section><section class="card finance-card"><div class="finance-tile">
 <div class="finance-row"><span>Almonty</span><strong>$2,109,689</strong></div>
 <div class="finance-row"><span>PEPP</span><strong>$1,002,196</strong></div>
 <div class="finance-row"><span>Wolf RRSP</span><strong>$684,507</strong></div>
@@ -53,9 +63,7 @@ main.grid>.webcam-card,main.grid>.calendar-card,main.grid>.placeholder-card{min-
 </div></section><section class="card weather-card">
 <div class="weather-city"><h3>Regina, Saskatchewan</h3><div class="weather-loading" id="reginaLoading">Loading weather…</div><div id="reginaWeather" style="display:none"></div><div class="error" id="reginaError"></div></div>
 <div class="weather-city"><h3>Canmore, Alberta</h3><div class="weather-loading" id="canmoreLoading">Loading weather…</div><div id="canmoreWeather" style="display:none"></div><div class="error" id="canmoreError"></div></div>
-</section><section class="card webcam-card"><div class="webcam-tile"><div class="cam-label">Ha Ling Peak · Drake Pub and Inn</div><div class="video"><iframe allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen="" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/RdRmXqnBZ-c?autoplay=1&amp;mute=1&amp;playsinline=1&amp;rel=0" title="Ha Ling Peak live webcam"></iframe></div></div></section><section class="card calendar-card">
-<iframe class="calendar-frame" frameborder="0" loading="lazy" scrolling="no" src="https://calendar.google.com/calendar/embed?src=munro306%40gmail.com&amp;src=rv2p0s9k59nvjup00q2547dq7m366oh2%40import.calendar.google.com&amp;src=c2e1fbb3ea22fd05c19e62cfb07b2d767a2c7fd039aea7cb8d3485bd4f713494%40group.calendar.google.com&amp;src=77e989c1kdkdvr3vo647o4kbor562sjs%40import.calendar.google.com&amp;src=01rb59pdu2n7o15fctsu4qon9htalmg4%40import.calendar.google.com&amp;src=ehs8067n96jguldfs26759pajfeafldo%40import.calendar.google.com&amp;src=kq8v9ib8o07nss1oqdmlu48nvbmhivl5%40import.calendar.google.com&amp;ctz=America%2FRegina" title="Google family calendar"></iframe>
-</section><section class="card placeholder-card"><div class="placeholder-tile"><div><strong>Placeholder</strong><br/><span>Reserved for future dashboard content</span></div></div></section></main>
+</section><section class="card webcam-card"><div class="webcam-tile"><div class="cam-label">Ha Ling Peak · Drake Pub and Inn</div><div class="video"><iframe allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen="" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/RdRmXqnBZ-c?autoplay=1&amp;mute=1&amp;playsinline=1&amp;rel=0" title="Ha Ling Peak live webcam"></iframe></div></div></section><section class="card calendar-card"><iframe class="calendar-frame" frameborder="0" loading="lazy" scrolling="no" src="https://calendar.google.com/calendar/embed?src=munro306%40gmail.com&amp;src=rv2p0s9k59nvjup00q2547dq7m366oh2%40import.calendar.google.com&amp;src=c2e1fbb3ea22fd05c19e62cfb07b2d767a2c7fd039aea7cb8d3485bd4f713494%40group.calendar.google.com&amp;src=77e989c1kdkdvr3vo647o4kbor562sjs%40import.calendar.google.com&amp;src=01rb59pdu2n7o15fctsu4qon9htalmg4%40import.calendar.google.com&amp;src=ehs8067n96jguldfs26759pajfeafldo%40import.calendar.google.com&amp;src=kq8v9ib8o07nss1oqdmlu48nvbmhivl5%40import.calendar.google.com&amp;ctz=America%2FRegina" title="Google family calendar"></iframe></section><section class="card placeholder-card"><div class="placeholder-tile"><div><strong>Placeholder</strong><br/><span>Reserved for future dashboard content</span></div></div></section></main>
 <div aria-label="Live information headlines" class="ticker-stack">
 <div class="ticker news"><div class="ticker-label">News</div><div class="ticker-window"><div class="ticker-track" id="newsTicker"><span>Loading live CBC News headlines…</span></div></div></div>
 <div class="ticker sports"><div class="ticker-label">Sports</div><div class="ticker-window"><div class="ticker-track" id="sportsTicker"><span>Loading live CBC Sports headlines…</span></div></div></div>
