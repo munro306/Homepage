@@ -48,6 +48,27 @@ main.grid>.webcam-card,main.grid>.calendar-card,main.grid>.placeholder-card{grid
 .ticker-track.is-fading{opacity:0}
 @media(max-width:1250px){main.grid>.stock{grid-column:span 24!important}main.grid>.finance-card,main.grid>.top-placeholder-card{grid-column:span 6!important}main.grid>.weather-card{grid-column:span 12!important}}
 @media(max-width:800px){main.grid>*{grid-column:span 24!important}}
+</style><style>
+/* Bottom bar: tickers left half, FIP player right half */
+.bottom-bar{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;align-items:stretch}
+.bottom-bar .ticker-stack{margin-top:0;min-width:0}
+.radio-player{display:flex;align-items:center;gap:14px;background:#0c1927;border:1px solid #20364d;border-radius:9px;padding:10px 16px;min-width:0}
+.radio-brand{background:#e2007a;color:#fff;font-weight:900;font-size:18px;letter-spacing:.06em;border-radius:8px;padding:10px 12px;flex:0 0 auto}
+.radio-btn{width:52px;height:52px;border-radius:50%;border:0;background:#f7fbff;color:#07111f;font-size:20px;cursor:pointer;flex:0 0 auto}
+.radio-btn:hover{background:#8bdcff}
+.radio-btn.playing{background:#e2007a;color:#fff}
+.radio-info{flex:1;min-width:0}
+.radio-title{font-size:16px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.radio-status{font-size:12px;color:#9bacbd;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.radio-vol{display:flex;align-items:center;gap:6px;font-size:11px;color:#9bacbd;flex:0 0 auto}
+.radio-vol input{width:110px;accent-color:#e2007a}
+.radio-link{font-size:11px;color:#8bdcff;flex:0 0 auto}
+@media(max-width:1000px){.bottom-bar{grid-template-columns:1fr}.radio-link{display:none}}
+/* Live finance */
+.finance-live{margin-top:8px;font-size:10px;color:#5d4a13;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.finance-row strong{transition:background-color 1.5s ease}
+.flash-up{background:#86efac!important;border-radius:4px}
+.flash-down{background:#fca5a5!important;border-radius:4px}
 </style></head>
 <body>
 <div class="wrap">
@@ -58,7 +79,7 @@ main.grid>.webcam-card,main.grid>.calendar-card,main.grid>.placeholder-card{grid
 <div class="quote"><iframe allowfullscreen="" src="https://s.tradingview.com/widgetembed/?symbol=NASDAQ%3AALM&amp;interval=D&amp;hidesidetoolbar=1&amp;symboledit=0&amp;saveimage=0&amp;toolbarbg=f1f3f6&amp;theme=light&amp;style=1&amp;timezone=America%2FNew_York&amp;withdateranges=1&amp;hideideas=1" title="ALM chart"></iframe></div>
 <div class="note">Market data may be delayed. <a class="stockLink" href="https://www.nasdaq.com/market-activity/stocks/alm" rel="noopener" target="_blank">Open ALM on Nasdaq</a></div>
 </section><section class="card finance-card"><div class="finance-tile">
-<div class="finance-row"><span>Almonty</span><strong>$2,109,689</strong></div>
+<div class="finance-row" id="finAlmontyRow"><span>Almonty</span><strong id="finAlmonty">$2,109,689</strong></div>
 <div class="finance-row"><span>PEPP</span><strong>$1,002,196</strong></div>
 <div class="finance-row"><span>Wolf RRSP</span><strong>$684,507</strong></div>
 <div class="finance-row"><span>Wolf Mrkt</span><strong>$133,648</strong></div>
@@ -66,21 +87,32 @@ main.grid>.webcam-card,main.grid>.calendar-card,main.grid>.placeholder-card{grid
 <div class="finance-row"><span>GRRSP</span><strong>$15,617</strong></div>
 <div class="finance-row"><span>RESP</span><strong>$111,393</strong></div>
 <div class="finance-row"><span>ITF</span><strong>$23,158</strong></div>
-<div class="finance-row finance-total"><span>Savings</span><strong>$3,957,718</strong></div>
+<div class="finance-row finance-total"><span>Savings</span><strong id="finSavings">$3,957,718</strong></div>
 <div class="finance-row finance-property"><span>Canmore</span><strong>$319,000</strong></div>
-<div class="finance-row finance-total net-worth-row"><span>Net Worth</span><strong>$4,276,718</strong></div>
-</div></section><section class="card weather-card">
+<div class="finance-row finance-total net-worth-row"><span>Net Worth</span><strong id="finNetWorth">$4,276,718</strong></div>
+<div class="finance-live" id="finStatus" title="Click to set or change the Finnhub API key">Live: connecting…</div></div></section><section class="card weather-card">
 <div class="weather-city"><h3>Regina, Saskatchewan</h3><div class="weather-loading" id="reginaLoading">Loading weather…</div><div id="reginaWeather" style="display:none"></div><div class="error" id="reginaError"></div></div>
 <div class="weather-city"><h3>Canmore, Alberta</h3><div class="weather-loading" id="canmoreLoading">Loading weather…</div><div id="canmoreWeather" style="display:none"></div><div class="error" id="canmoreError"></div></div>
 </section><section class="card top-placeholder-card"><div class="placeholder-tile"><div><strong>Placeholder</strong><br/><span>Reserved for future dashboard content</span></div></div></section><section class="card webcam-card"><div class="webcam-tile"><div class="cam-label">Ha Ling Peak · Drake Pub and Inn</div><div class="video"><iframe allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen="" data-src="https://www.youtube.com/embed/RdRmXqnBZ-c?autoplay=1&amp;mute=1&amp;playsinline=1&amp;rel=0" id="halingWebcamFrame" name="halingWebcamFrame" referrerpolicy="strict-origin-when-cross-origin" src="about:blank" title="Ha Ling Peak live webcam"></iframe></div></div></section><section class="card calendar-card">
 <iframe class="calendar-frame" data-src="https://calendar.google.com/calendar/embed?src=munro306%40gmail.com&amp;src=rv2p0s9k59nvjup00q2547dq7m366oh2%40import.calendar.google.com&amp;src=c2e1fbb3ea22fd05c19e62cfb07b2d767a2c7fd039aea7cb8d3485bd4f713494%40group.calendar.google.com&amp;src=77e989c1kdkdvr3vo647o4kbor562sjs%40import.calendar.google.com&amp;src=01rb59pdu2n7o15fctsu4qon9htalmg4%40import.calendar.google.com&amp;src=ehs8067n96jguldfs26759pajfeafldo%40import.calendar.google.com&amp;src=kq8v9ib8o07nss1oqdmlu48nvbmhivl5%40import.calendar.google.com&amp;ctz=America%2FRegina" frameborder="0" id="familyCalendarFrame" name="familyCalendarFrame" scrolling="no" src="about:blank" title="Google family calendar"></iframe>
 </section><section class="card placeholder-card"><div class="placeholder-tile"><div><strong>Placeholder</strong><br/><span>Reserved for future dashboard content</span></div></div></section></main>
-<div aria-label="Live information headlines" class="ticker-stack">
+<div class="bottom-bar"><div aria-label="Live information headlines" class="ticker-stack">
 <div class="ticker news"><div class="ticker-label">News</div><div class="ticker-window"><div class="ticker-track" id="newsTicker"><span>Loading live CBC News headlines…</span></div></div></div>
 <div class="ticker sports"><div class="ticker-label">Sports</div><div class="ticker-window"><div class="ticker-track" id="sportsTicker"><span>Loading live CBC Sports headlines…</span></div></div></div>
 <div class="ticker business"><div class="ticker-label">Business</div><div class="ticker-window"><div class="ticker-track" id="businessTicker"><span>Loading live CBC Business headlines…</span></div></div></div>
 </div>
-<div class="footer">Weather and live feeds refresh every 15 minutes. Headlines fade to the next item every 15 seconds; click a label to refresh.</div>
+<div aria-label="FIP radio player" class="radio-player">
+<div class="radio-brand">FIP</div>
+<button aria-label="Play FIP" class="radio-btn" id="fipPlay" type="button">▶</button>
+<div class="radio-info">
+<div class="radio-title">FIP · Radio France</div>
+<div class="radio-status" id="fipStatus">Live stream · press play</div>
+</div>
+<label class="radio-vol"><span>Vol</span><input id="fipVolume" max="1" min="0" step="0.05" type="range" value="0.6"/></label>
+<a class="radio-link" href="https://www.radiofrance.fr/fip" rel="noopener noreferrer" target="_blank">radiofrance.fr/fip</a>
+<audio id="fipAudio" preload="none"></audio>
+</div></div>
+<div class="footer">Weather and live feeds refresh every 15 minutes. Headlines fade every 15 seconds; click a label to refresh. ALM value refreshes every 60 seconds.</div>
 </div>
 <script>
 const weatherMap={0:['Clear','☀️'],1:['Mainly clear','🌤️'],2:['Partly cloudy','⛅'],3:['Overcast','☁️'],45:['Fog','🌫️'],48:['Rime fog','🌫️'],51:['Drizzle','🌦️'],53:['Drizzle','🌦️'],55:['Heavy drizzle','🌧️'],61:['Light rain','🌦️'],63:['Rain','🌧️'],65:['Heavy rain','🌧️'],71:['Light snow','🌨️'],73:['Snow','❄️'],75:['Heavy snow','❄️'],80:['Rain showers','🌦️'],81:['Rain showers','🌧️'],82:['Heavy showers','⛈️'],85:['Snow showers','🌨️'],86:['Heavy snow showers','❄️'],95:['Thunderstorm','⛈️']};
@@ -133,5 +165,84 @@ window.addEventListener('load',function(){
     if(f&&f.dataset.src){f.src=f.dataset.src;}
   });
 });
+</script><script>
+/* ===== Live ALM-linked financial summary =====
+   Almonty value = shares x ALM (USD, Nasdaq) x USD->CAD.
+   Savings and Net Worth move by the same change as the Almonty row;
+   every other row stays at the value you entered. */
+const FIN={
+  shares:153101,
+  baseAlmonty:2109689,   // Almonty value when the table was last typed in
+  baseSavings:3957718,
+  baseNetWorth:4276718,
+  refreshMs:60000
+};
+const fmtCAD=v=>'$'+Math.round(v).toLocaleString('en-CA');
+const FINNHUB_KEY='d3lptihr01qq28eohh6gd3lptihr01qq28eohh70';
+const finKey=()=>localStorage.getItem('finnhubKey')||FINNHUB_KEY;
+let lastAlm=null, fxCache={rate:null,at:0};
+function setFin(id,val){
+  const el=document.getElementById(id), txt=fmtCAD(val);
+  if(el.textContent===txt)return;
+  const prev=Number(el.textContent.replace(/[^0-9.-]/g,''));
+  el.textContent=txt;
+  el.classList.remove('flash-up','flash-down'); void el.offsetWidth;
+  el.classList.add(val>=prev?'flash-up':'flash-down');
+  setTimeout(()=>el.classList.remove('flash-up','flash-down'),1500);
+}
+async function getFx(){
+  if(fxCache.rate&&Date.now()-fxCache.at<3600000)return fxCache.rate;
+  const urls=['https://api.frankfurter.dev/v1/latest?base=USD&symbols=CAD','https://open.er-api.com/v6/latest/USD'];
+  for(const u of urls){try{const r=await fetch(u,{cache:'no-store'});const d=await r.json();const rate=(d.rates&&d.rates.CAD);if(rate){fxCache={rate,at:Date.now()};return rate}}catch(_){}}
+  throw new Error('FX unavailable');
+}
+async function updateFinance(){
+  const status=document.getElementById('finStatus'), key=finKey();
+  if(!key){status.textContent='Static values · click to enable live';return}
+  try{
+    const [q,fx]=await Promise.all([
+      fetch('https://finnhub.io/api/v1/quote?symbol=ALM&token='+encodeURIComponent(key),{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('Quote HTTP '+r.status);return r.json()}),
+      getFx()
+    ]);
+    if(!q||!q.c)throw new Error('No ALM price');
+    const alm=FIN.shares*q.c*fx, delta=alm-FIN.baseAlmonty;
+    setFin('finAlmonty',alm);
+    setFin('finSavings',FIN.baseSavings+delta);
+    setFin('finNetWorth',FIN.baseNetWorth+delta);
+    lastAlm=q.c;
+    const t=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Regina',hour:'numeric',minute:'2-digit'}).format(new Date());
+    status.textContent=`Live · ALM US$${q.c.toFixed(2)} × ${fx.toFixed(4)} · ${t}`;
+  }catch(e){status.textContent='Live update failed · '+e.message+' · click to change key'}
+}
+document.getElementById('finStatus').addEventListener('click',()=>{
+  const k=prompt('Paste your free Finnhub API key (finnhub.io). Stored only in this browser. Leave blank to use the built-in key.',finKey());
+  if(k===null)return;
+  k.trim()?localStorage.setItem('finnhubKey',k.trim()):localStorage.removeItem('finnhubKey');
+  updateFinance();
+});
+updateFinance();setInterval(updateFinance,FIN.refreshMs);
+
+/* ===== FIP radio player ===== */
+(function(){
+  const STREAMS=['https://icecast.radiofrance.fr/fip-hifi.aac','https://icecast.radiofrance.fr/fip-midfi.mp3'];
+  const audio=document.getElementById('fipAudio'), btn=document.getElementById('fipPlay'),
+        stat=document.getElementById('fipStatus'), vol=document.getElementById('fipVolume');
+  let idx=0;
+  vol.value=localStorage.getItem('fipVolume')||0.6; audio.volume=vol.value;
+  vol.addEventListener('input',()=>{audio.volume=vol.value;localStorage.setItem('fipVolume',vol.value)});
+  function ui(playing,msg){btn.innerHTML=playing?'&#10074;&#10074;':'&#9654;';btn.classList.toggle('playing',playing);btn.setAttribute('aria-label',playing?'Pause FIP':'Play FIP');stat.textContent=msg}
+  async function start(){
+    // reconnect to the live edge each time rather than resuming a stale buffer
+    audio.src=STREAMS[idx]+'?t='+Date.now();
+    ui(true,'Connecting…');
+    try{await audio.play();ui(true,'Live · streaming')}
+    catch(e){ if(idx<STREAMS.length-1){idx++;return start()} ui(false,'Could not start stream — try again'); }
+  }
+  function stop(){audio.pause();audio.removeAttribute('src');audio.load();ui(false,'Paused · press play for live')}
+  btn.addEventListener('click',()=>audio.paused||!audio.src?start():stop());
+  audio.addEventListener('waiting',()=>{if(!audio.paused)stat.textContent='Buffering…'});
+  audio.addEventListener('playing',()=>stat.textContent='Live · streaming');
+  audio.addEventListener('error',()=>{if(audio.getAttribute('src')){if(idx<STREAMS.length-1){idx++;start()}else ui(false,'Stream error — press play to retry')}});
+})();
 </script></body>
 </html>
