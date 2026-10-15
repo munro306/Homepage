@@ -130,7 +130,27 @@ main.grid>.quotes-card{container-type:inline-size;display:flex;flex-direction:co
 <div class="wrap">
 <div class="top"><div class="kicker">Andrew's live dashboard</div><div><span class="muted">Mountain time </span><span class="clock" id="clock">--:--</span></div></div>
 <main class="grid"><section class="card stock">
-<div class="quote"><iframe allowfullscreen="" src="https://s.tradingview.com/widgetembed/?symbol=NASDAQ%3AALM&amp;interval=D&amp;hidesidetoolbar=1&amp;symboledit=0&amp;saveimage=0&amp;toolbarbg=f1f3f6&amp;theme=light&amp;style=1&amp;timezone=America%2FNew_York&amp;withdateranges=1&amp;hideideas=1" title="ALM chart"></iframe></div>
+<div class="quote"><div class="tradingview-widget-container" style="height:100%;width:100%">
+<div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
+<script async="" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" type="text/javascript">
+  {
+    "autosize": true,
+    "symbol": "NASDAQ:ALM",
+    "interval": "D",
+    "timezone": "America/Regina",
+    "theme": "light",
+    "style": "1",
+    "locale": "en",
+    "allow_symbol_change": false,
+    "hide_side_toolbar": true,
+    "hide_top_toolbar": false,
+    "withdateranges": true,
+    "save_image": false,
+    "calendar": false,
+    "support_host": "https://www.tradingview.com"
+  }
+  </script>
+</div></div>
 <div class="note">Market data may be delayed. <a class="stockLink" href="https://www.nasdaq.com/market-activity/stocks/alm" rel="noopener" target="_blank">Open ALM on Nasdaq</a></div>
 </section><section class="card quotes-card"><div class="watchlist" id="watchlist"></div><div class="q-status" id="quoteStatus">Quotes: connecting…</div></section><section class="card finance-card"><div class="finance-tile">
 <div class="finance-row" id="finAlmontyRow"><span>Almonty</span><strong id="finAlmonty">$2,109,689</strong></div>
@@ -356,7 +376,7 @@ async function updateWatchlist(){
 }
 updateWatchlist();setInterval(updateWatchlist,60000);
 </script><script>
-/* ===== Radio player: 10 commercial-free stations, chill -> upbeat ===== */
+/* ===== Radio player: 21 commercial-free stations, alphabetical ===== */
 (function(){
   const STATIONS=[
     {id:'groovesalad', name:'SomaFM Groove Salad · chill electronic', short:'Groove Salad', color:'#0e7490', site:'https://somafm.com/groovesalad/',
@@ -378,8 +398,31 @@ updateWatchlist();setInterval(updateWatchlist,60000);
     {id:'fipelectro', name:'FIP Electro · electronic, dance', short:'FIP Electro', color:'#1d4ed8', site:'https://www.radiofrance.fr/fip/radio-electro',
       urls:['https://icecast.radiofrance.fr/fipelectro-hifi.aac','https://icecast.radiofrance.fr/fipelectro-midfi.mp3']},
     {id:'rprock', name:'Radio Paradise Rock · high energy rock', short:'RP Rock', color:'#b91c1c', site:'https://radioparadise.com/',
-      urls:['https://stream.radioparadise.com/rock-320','https://stream.radioparadise.com/rock-128']}
+      urls:['https://stream.radioparadise.com/rock-320','https://stream.radioparadise.com/rock-128']},
+    {id:'kexp', name:'KEXP Seattle · indie, alternative, live sessions', short:'KEXP', color:'#334155', site:'https://www.kexp.org/',
+      urls:['https://kexp.streamguys1.com/kexp160.aac','https://kexp-mp3-128.streamguys1.com/kexp128.mp3']},
+    {id:'fiprock', name:'FIP Rock · classic & modern rock', short:'FIP Rock', color:'#991b1b', site:'https://www.radiofrance.fr/fip/radio-rock',
+      urls:['https://icecast.radiofrance.fr/fiprock-hifi.aac','https://icecast.radiofrance.fr/fiprock-midfi.mp3']},
+    {id:'fippop', name:'FIP Pop · pop, past & present', short:'FIP Pop', color:'#db2777', site:'https://www.radiofrance.fr/fip/radio-pop',
+      urls:['https://icecast.radiofrance.fr/fippop-hifi.aac','https://icecast.radiofrance.fr/fippop-midfi.mp3']},
+    {id:'fipworld', name:'FIP Monde · world music', short:'FIP Monde', color:'#0f766e', site:'https://www.radiofrance.fr/fip/radio-monde',
+      urls:['https://icecast.radiofrance.fr/fipworld-hifi.aac','https://icecast.radiofrance.fr/fipworld-midfi.mp3']},
+    {id:'rpglobal', name:'Radio Paradise Global · world, eclectic', short:'RP Global', color:'#166534', site:'https://radioparadise.com/',
+      urls:['https://stream.radioparadise.com/global-320','https://stream.radioparadise.com/global-128']},
+    {id:'dronezone', name:'SomaFM Drone Zone · ambient, deep focus', short:'Drone Zone', color:'#1e3a8a', site:'https://somafm.com/dronezone/',
+      urls:['https://ice2.somafm.com/dronezone-128-mp3','https://ice4.somafm.com/dronezone-128-mp3']},
+    {id:'lush', name:'SomaFM Lush · mellow vocals, electronica', short:'Lush', color:'#7e22ce', site:'https://somafm.com/lush/',
+      urls:['https://ice2.somafm.com/lush-128-mp3','https://ice4.somafm.com/lush-128-mp3']},
+    {id:'secretagent', name:'SomaFM Secret Agent · lounge, spy-jazz', short:'Secret Agent', color:'#374151', site:'https://somafm.com/secretagent/',
+      urls:['https://ice2.somafm.com/secretagent-128-mp3','https://ice4.somafm.com/secretagent-128-mp3']},
+    {id:'bagel', name:'SomaFM BAGeL Radio · alternative rock', short:'BAGeL Radio', color:'#0369a1', site:'https://somafm.com/bagel/',
+      urls:['https://ice2.somafm.com/bagel-128-mp3','https://ice4.somafm.com/bagel-128-mp3']},
+    {id:'poptron', name:'SomaFM PopTron · indie dance, electropop', short:'PopTron', color:'#ea580c', site:'https://somafm.com/poptron/',
+      urls:['https://ice2.somafm.com/poptron-128-mp3','https://ice4.somafm.com/poptron-128-mp3']},
+    {id:'u80s', name:'SomaFM Underground 80s · new wave, synth-pop', short:'Underground 80s', color:'#c026d3', site:'https://somafm.com/u80s/',
+      urls:['https://ice2.somafm.com/u80s-128-mp3','https://ice4.somafm.com/u80s-128-mp3']}
   ];
+  STATIONS.sort((a,b)=>a.name.localeCompare(b.name,'en',{sensitivity:'base'}));
   const audio=document.getElementById('fipAudio'), btn=document.getElementById('fipPlay'),
         stat=document.getElementById('fipStatus'), vol=document.getElementById('fipVolume'),
         sel=document.getElementById('radioStation'), brand=document.getElementById('radioBrand'),
