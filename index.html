@@ -125,6 +125,10 @@ main.grid>.quotes-card{container-type:inline-size;display:flex;flex-direction:co
 .wl-price,.wl-chg{white-space:nowrap;text-align:right}
 .wl-spark{display:none!important}
 @container (min-width:260px){.wl-row{grid-template-columns:minmax(0,1fr) auto auto!important;grid-template-areas:"sym price chg"!important}}
+</style><style>
+/* ALM chart: at least 420px tall */
+section.stock .quote{height:420px!important;min-height:420px!important}
+section.stock .tradingview-widget-container,section.stock .tradingview-widget-container__widget{height:100%!important;min-height:420px}
 </style></head>
 <body>
 <div class="wrap">
