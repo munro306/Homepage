@@ -114,6 +114,10 @@ main.grid>.quotes-card{container-type:inline-size;display:flex;flex-direction:co
 .wl-spark{height:14px!important;margin:0!important;align-self:center}
 .wl-name{display:none}
 @container (min-width:260px){.wl-row{grid-template-columns:minmax(0,1fr) 80px auto!important;grid-template-areas:"sym spark price" "sym spark chg"!important}.wl-spark{height:26px!important}}
+</style><style>
+.radio-select{width:100%;max-width:340px;background:#07111f;color:#f7fbff;border:1px solid #2b4a66;border-radius:7px;padding:6px 8px;font-size:14px;font-weight:700;cursor:pointer}
+.radio-select:focus{outline:2px solid #e2007a;outline-offset:1px}
+.radio-brand{min-width:64px;text-align:center;font-size:14px!important;transition:background-color .3s}
 </style></head>
 <body>
 <div class="wrap">
@@ -144,15 +148,15 @@ main.grid>.quotes-card{container-type:inline-size;display:flex;flex-direction:co
 <div class="ticker sports"><div class="ticker-label">Sports</div><div class="ticker-window"><div class="ticker-track" id="sportsTicker"><span>Loading live CBC Sports headlines…</span></div></div></div>
 <div class="ticker business"><div class="ticker-label">Business</div><div class="ticker-window"><div class="ticker-track" id="businessTicker"><span>Loading live CBC Business headlines…</span></div></div></div>
 </div>
-<div aria-label="FIP radio player" class="radio-player">
-<div class="radio-brand">FIP</div>
-<button aria-label="Play FIP" class="radio-btn" id="fipPlay" type="button">▶</button>
+<div aria-label="Radio player" class="radio-player">
+<div class="radio-brand" id="radioBrand">FIP</div>
+<button aria-label="Play" class="radio-btn" id="fipPlay" type="button">▶</button>
 <div class="radio-info">
-<div class="radio-title">FIP · Radio France</div>
+<select aria-label="Choose station" class="radio-select" id="radioStation"></select>
 <div class="radio-status" id="fipStatus">Live stream · press play</div>
 </div>
 <label class="radio-vol"><span>Vol</span><input id="fipVolume" max="1" min="0" step="0.05" type="range" value="0.6"/></label>
-<a class="radio-link" href="https://www.radiofrance.fr/fip" rel="noopener noreferrer" target="_blank">radiofrance.fr/fip</a>
+<a class="radio-link" href="https://www.radiofrance.fr/fip" id="radioLink" rel="noopener noreferrer" target="_blank">Website</a>
 <audio id="fipAudio" preload="none"></audio>
 </div></div>
 <div class="footer">Weather and live feeds refresh every 15 minutes. Headlines fade every 15 seconds; click a label to refresh. ALM value refreshes every 60 seconds.</div>
@@ -265,28 +269,6 @@ document.getElementById('finStatus').addEventListener('click',()=>{
 });
 updateFinance();setInterval(updateFinance,FIN.refreshMs);
 
-/* ===== FIP radio player ===== */
-(function(){
-  const STREAMS=['https://icecast.radiofrance.fr/fip-hifi.aac','https://icecast.radiofrance.fr/fip-midfi.mp3'];
-  const audio=document.getElementById('fipAudio'), btn=document.getElementById('fipPlay'),
-        stat=document.getElementById('fipStatus'), vol=document.getElementById('fipVolume');
-  let idx=0;
-  vol.value=localStorage.getItem('fipVolume')||0.6; audio.volume=vol.value;
-  vol.addEventListener('input',()=>{audio.volume=vol.value;localStorage.setItem('fipVolume',vol.value)});
-  function ui(playing,msg){btn.innerHTML=playing?'&#10074;&#10074;':'&#9654;';btn.classList.toggle('playing',playing);btn.setAttribute('aria-label',playing?'Pause FIP':'Play FIP');stat.textContent=msg}
-  async function start(){
-    // reconnect to the live edge each time rather than resuming a stale buffer
-    audio.src=STREAMS[idx]+'?t='+Date.now();
-    ui(true,'Connecting…');
-    try{await audio.play();ui(true,'Live · streaming')}
-    catch(e){ if(idx<STREAMS.length-1){idx++;return start()} ui(false,'Could not start stream — try again'); }
-  }
-  function stop(){audio.pause();audio.removeAttribute('src');audio.load();ui(false,'Paused · press play for live')}
-  btn.addEventListener('click',()=>audio.paused||!audio.src?start():stop());
-  audio.addEventListener('waiting',()=>{if(!audio.paused)stat.textContent='Buffering…'});
-  audio.addEventListener('playing',()=>stat.textContent='Live · streaming');
-  audio.addEventListener('error',()=>{if(audio.getAttribute('src')){if(idx<STREAMS.length-1){idx++;start()}else ui(false,'Stream error — press play to retry')}});
-})();
 </script><script>
 /* ===== Watchlist with intraday sparklines (Finnhub quotes) =====
    Add more symbols here, e.g. {sym:'TSM',name:'Taiwan Semiconductor'} */
@@ -296,13 +278,10 @@ const WATCHLIST=[
   {sym:'REMX', label:'REMX',    name:'Rare Earth/Strategic Metals ETF'},
   {sym:'SPY',  label:'S&P 500', name:'SPDR S&P 500 ETF (SPY)'},
   {sym:'QQQ',  label:'Nasdaq',  name:'Invesco QQQ, Nasdaq-100 (QQQ)'},
-  {sym:'EWC',  label:'Canada',  name:'iShares MSCI Canada (EWC), TSX proxy'},
   {sym:'USO',  label:'Crude',   name:'US Oil Fund (USO), WTI proxy'},
   {sym:'GLD',  label:'Gold',    name:'SPDR Gold (GLD)'},
   {sym:'AAPL', label:'AAPL',    name:'Apple'},
-  {sym:'GOOGL',label:'GOOGL',   name:'Alphabet (Google)'},
-  {sym:'MSFT', label:'MSFT',    name:'Microsoft'},
-  {sym:'NVDA', label:'NVDA',    name:'NVIDIA'}
+  {sym:'GOOGL',label:'GOOGL',   name:'Alphabet (Google)'}
 ];
 const HOLD_SHARES=153101;
 const wl=document.getElementById('watchlist');
@@ -369,5 +348,62 @@ async function updateWatchlist(){
   status.textContent=ok?(almDay!==null?`ALM holding ${almDay>=0?'+':'-'}US$${Math.abs(Math.round(almDay)).toLocaleString('en-US')} · `:'')+t:'Quotes unavailable · retrying';
 }
 updateWatchlist();setInterval(updateWatchlist,60000);
+</script><script>
+/* ===== Radio player: 10 commercial-free stations, chill -> upbeat ===== */
+(function(){
+  const STATIONS=[
+    {id:'groovesalad', name:'SomaFM Groove Salad · chill electronic', short:'Groove Salad', color:'#0e7490', site:'https://somafm.com/groovesalad/',
+      urls:['https://ice2.somafm.com/groovesalad-128-mp3','https://ice4.somafm.com/groovesalad-128-mp3']},
+    {id:'rpmellow', name:'Radio Paradise Mellow · laid-back mix', short:'RP Mellow', color:'#4d7c0f', site:'https://radioparadise.com/',
+      urls:['https://stream.radioparadise.com/mellow-320','https://stream.radioparadise.com/mellow-128']},
+    {id:'fipjazz', name:'FIP Jazz · classic & modern jazz', short:'FIP Jazz', color:'#9d174d', site:'https://www.radiofrance.fr/fip/radio-jazz',
+      urls:['https://icecast.radiofrance.fr/fipjazz-hifi.aac','https://icecast.radiofrance.fr/fipjazz-midfi.mp3']},
+    {id:'beatblender', name:'SomaFM Beat Blender · deep house, downtempo', short:'Beat Blender', color:'#6d28d9', site:'https://somafm.com/beatblender/',
+      urls:['https://ice2.somafm.com/beatblender-128-mp3','https://ice4.somafm.com/beatblender-128-mp3']},
+    {id:'fip', name:'FIP · eclectic (the original)', short:'FIP', color:'#e2007a', site:'https://www.radiofrance.fr/fip',
+      urls:['https://icecast.radiofrance.fr/fip-hifi.aac','https://icecast.radiofrance.fr/fip-midfi.mp3']},
+    {id:'rpmain', name:'Radio Paradise · eclectic rock/indie/world', short:'Radio Paradise', color:'#15803d', site:'https://radioparadise.com/',
+      urls:['https://stream.radioparadise.com/aac-320','https://stream.radioparadise.com/aac-128']},
+    {id:'fipgroove', name:'FIP Groove · funk, soul, hip-hop', short:'FIP Groove', color:'#c2410c', site:'https://www.radiofrance.fr/fip/radio-groove',
+      urls:['https://icecast.radiofrance.fr/fipgroove-hifi.aac','https://icecast.radiofrance.fr/fipgroove-midfi.mp3']},
+    {id:'indiepop', name:'SomaFM Indie Pop Rocks! · upbeat indie', short:'Indie Pop', color:'#be123c', site:'https://somafm.com/indiepop/',
+      urls:['https://ice2.somafm.com/indiepop-128-mp3','https://ice4.somafm.com/indiepop-128-mp3']},
+    {id:'fipelectro', name:'FIP Electro · electronic, dance', short:'FIP Electro', color:'#1d4ed8', site:'https://www.radiofrance.fr/fip/radio-electro',
+      urls:['https://icecast.radiofrance.fr/fipelectro-hifi.aac','https://icecast.radiofrance.fr/fipelectro-midfi.mp3']},
+    {id:'rprock', name:'Radio Paradise Rock · high energy rock', short:'RP Rock', color:'#b91c1c', site:'https://radioparadise.com/',
+      urls:['https://stream.radioparadise.com/rock-320','https://stream.radioparadise.com/rock-128']}
+  ];
+  const audio=document.getElementById('fipAudio'), btn=document.getElementById('fipPlay'),
+        stat=document.getElementById('fipStatus'), vol=document.getElementById('fipVolume'),
+        sel=document.getElementById('radioStation'), brand=document.getElementById('radioBrand'),
+        link=document.getElementById('radioLink');
+  STATIONS.forEach(s=>sel.insertAdjacentHTML('beforeend',`<option value="${s.id}">${s.name}</option>`));
+  let current=STATIONS.find(s=>s.id===localStorage.getItem('radioStation'))||STATIONS.find(s=>s.id==='fip');
+  let urlIdx=0, wantPlay=false;
+  function applyStation(){
+    sel.value=current.id; brand.textContent=current.short; brand.style.background=current.color;
+    link.href=current.site; localStorage.setItem('radioStation',current.id);
+  }
+  vol.value=localStorage.getItem('fipVolume')||0.6; audio.volume=vol.value;
+  vol.addEventListener('input',()=>{audio.volume=vol.value;localStorage.setItem('fipVolume',vol.value)});
+  function ui(playing,msg){btn.innerHTML=playing?'&#10074;&#10074;':'&#9654;';btn.classList.toggle('playing',playing);btn.setAttribute('aria-label',playing?'Pause':'Play');stat.textContent=msg}
+  async function start(){
+    wantPlay=true;
+    audio.src=current.urls[urlIdx]+(current.urls[urlIdx].includes('?')?'&':'?')+'t='+Date.now();
+    ui(true,'Connecting to '+current.short+'…');
+    try{await audio.play();ui(true,'Live · '+current.short)}
+    catch(e){if(urlIdx<current.urls.length-1){urlIdx++;return start()}ui(false,'Could not start '+current.short+' — try again')}
+  }
+  function stop(){wantPlay=false;audio.pause();audio.removeAttribute('src');audio.load();ui(false,'Paused · press play for live')}
+  btn.addEventListener('click',()=>audio.paused||!audio.getAttribute('src')?(urlIdx=0,start()):stop());
+  sel.addEventListener('change',()=>{
+    current=STATIONS.find(s=>s.id===sel.value); urlIdx=0; applyStation();
+    if(wantPlay)start(); else ui(false,current.short+' selected · press play');
+  });
+  audio.addEventListener('waiting',()=>{if(wantPlay)stat.textContent='Buffering…'});
+  audio.addEventListener('playing',()=>stat.textContent='Live · '+current.short);
+  audio.addEventListener('error',()=>{if(wantPlay&&audio.getAttribute('src')){if(urlIdx<current.urls.length-1){urlIdx++;start()}else ui(false,'Stream error — press play to retry')}});
+  applyStation();
+})();
 </script></body>
 </html>
