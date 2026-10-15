@@ -69,16 +69,59 @@ main.grid>.webcam-card,main.grid>.calendar-card,main.grid>.placeholder-card{grid
 .finance-row strong{transition:background-color 1.5s ease}
 .flash-up{background:#86efac!important;border-radius:4px}
 .flash-down{background:#fca5a5!important;border-radius:4px}
+</style><style>
+/* Top row: chart 1/2, quotes 1/8, finance 1/8, weather 1/4 */
+main.grid>.quotes-card{grid-column:span 3!important;padding:14px;min-width:0;display:flex;flex-direction:column;gap:10px}
+.stock .quote{height:330px}
+.quote-box{flex:1;background:#0c1927;border:1px solid #20364d;border-radius:12px;padding:12px 10px;display:flex;flex-direction:column;justify-content:center;min-width:0}
+.q-head{display:flex;justify-content:space-between;align-items:baseline}
+.q-sym{font-size:22px;font-weight:900}
+.q-ex{font-size:9px;color:#7f93a8;letter-spacing:.1em}
+.q-name{font-size:11px;color:#9bacbd;margin:2px 0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.q-price{font-size:26px;font-weight:900;white-space:nowrap}
+.q-price small{font-size:10px;color:#9bacbd;font-weight:600}
+.q-chg{font-size:14px;font-weight:800;margin-top:4px;white-space:nowrap}
+.q-hold{font-size:11px;color:#9bacbd;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.q-up{color:#34d399}.q-down{color:#f87171}.q-flat{color:#cbd5e1}
+.q-status{font-size:9px;color:#6f8497;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:1250px){main.grid>.quotes-card{grid-column:span 6!important}}
+@media(max-width:800px){main.grid>.quotes-card{grid-column:span 24!important}}
+</style><style>
+/* Watchlist (symbol | sparkline | price) */
+main.grid>.quotes-card{container-type:inline-size;display:flex;flex-direction:column;gap:6px}
+.watchlist{flex:1;display:flex;flex-direction:column;min-width:0}
+.wl-row{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"sym price" "name chg" "spark spark";column-gap:8px;row-gap:1px;padding:10px 2px;border-bottom:1px solid #20364d;align-items:center;min-width:0}
+.wl-row:last-child{border-bottom:0}
+.wl-sym{grid-area:sym;font-size:16px;font-weight:900;white-space:nowrap}
+.wl-name{grid-area:name;font-size:11px;color:#9bacbd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.wl-price{grid-area:price;font-size:16px;font-weight:800;text-align:right;white-space:nowrap}
+.wl-chg{grid-area:chg;font-size:11px;font-weight:700;text-align:right;white-space:nowrap}
+.wl-spark{grid-area:spark;height:46px;margin-top:6px;min-width:0}
+.wl-spark svg{width:100%;height:100%;display:block}
+.wl-up{color:#34d399}.wl-down{color:#f87171}.wl-flat{color:#cbd5e1}
+@container (min-width:260px){
+  .wl-row{grid-template-columns:minmax(0,1fr) 72px auto;grid-template-areas:"sym spark price" "name spark chg"}
+  .wl-spark{height:34px;margin-top:0}
+}
+</style><style>
+/* Compact watchlist: 2 lines per symbol, rows share tile height */
+.watchlist{display:flex;flex-direction:column;justify-content:space-between}
+.wl-row{flex:1;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
+  grid-template-areas:"sym price" "spark chg"!important;column-gap:6px;row-gap:0;padding:3px 0!important;min-height:0}
+.wl-sym{font-size:13px!important;overflow:hidden;text-overflow:ellipsis}
+.wl-price{font-size:13px!important}
+.wl-chg{font-size:11px!important}
+.wl-spark{height:14px!important;margin:0!important;align-self:center}
+.wl-name{display:none}
+@container (min-width:260px){.wl-row{grid-template-columns:minmax(0,1fr) 80px auto!important;grid-template-areas:"sym spark price" "sym spark chg"!important}.wl-spark{height:26px!important}}
 </style></head>
 <body>
 <div class="wrap">
 <div class="top"><div class="kicker">Andrew's live dashboard</div><div><span class="muted">Mountain time </span><span class="clock" id="clock">--:--</span></div></div>
 <main class="grid"><section class="card stock">
-<div class="alm-live"><iframe src="https://s.tradingview.com/embed-widget/single-quote/?locale=en#%7B%22symbol%22%3A%22NASDAQ%3AALM%22%2C%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Atrue%2C%22locale%22%3A%22en%22%2C%22width%22%3A%22100%25%22%7D" title="ALM live quote"></iframe></div>
-<div class="note" style="margin:0 0 8px">Holding: <strong>153,101 shares</strong>. Daily holding change = 153,101 × daily $ change shown above.</div>
 <div class="quote"><iframe allowfullscreen="" src="https://s.tradingview.com/widgetembed/?symbol=NASDAQ%3AALM&amp;interval=D&amp;hidesidetoolbar=1&amp;symboledit=0&amp;saveimage=0&amp;toolbarbg=f1f3f6&amp;theme=light&amp;style=1&amp;timezone=America%2FNew_York&amp;withdateranges=1&amp;hideideas=1" title="ALM chart"></iframe></div>
 <div class="note">Market data may be delayed. <a class="stockLink" href="https://www.nasdaq.com/market-activity/stocks/alm" rel="noopener" target="_blank">Open ALM on Nasdaq</a></div>
-</section><section class="card finance-card"><div class="finance-tile">
+</section><section class="card quotes-card"><div class="watchlist" id="watchlist"></div><div class="q-status" id="quoteStatus">Quotes: connecting…</div></section><section class="card finance-card"><div class="finance-tile">
 <div class="finance-row" id="finAlmontyRow"><span>Almonty</span><strong id="finAlmonty">$2,109,689</strong></div>
 <div class="finance-row"><span>PEPP</span><strong>$1,002,196</strong></div>
 <div class="finance-row"><span>Wolf RRSP</span><strong>$684,507</strong></div>
@@ -93,7 +136,7 @@ main.grid>.webcam-card,main.grid>.calendar-card,main.grid>.placeholder-card{grid
 <div class="finance-live" id="finStatus" title="Click to set or change the Finnhub API key">Live: connecting…</div></div></section><section class="card weather-card">
 <div class="weather-city"><h3>Regina, Saskatchewan</h3><div class="weather-loading" id="reginaLoading">Loading weather…</div><div id="reginaWeather" style="display:none"></div><div class="error" id="reginaError"></div></div>
 <div class="weather-city"><h3>Canmore, Alberta</h3><div class="weather-loading" id="canmoreLoading">Loading weather…</div><div id="canmoreWeather" style="display:none"></div><div class="error" id="canmoreError"></div></div>
-</section><section class="card top-placeholder-card"><div class="placeholder-tile"><div><strong>Placeholder</strong><br/><span>Reserved for future dashboard content</span></div></div></section><section class="card webcam-card"><div class="webcam-tile"><div class="cam-label">Ha Ling Peak · Drake Pub and Inn</div><div class="video"><iframe allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen="" data-src="https://www.youtube.com/embed/RdRmXqnBZ-c?autoplay=1&amp;mute=1&amp;playsinline=1&amp;rel=0" id="halingWebcamFrame" name="halingWebcamFrame" referrerpolicy="strict-origin-when-cross-origin" src="about:blank" title="Ha Ling Peak live webcam"></iframe></div></div></section><section class="card calendar-card">
+</section><section class="card webcam-card"><div class="webcam-tile"><div class="cam-label">Ha Ling Peak · Drake Pub and Inn</div><div class="video"><iframe allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen="" data-src="https://www.youtube.com/embed/RdRmXqnBZ-c?autoplay=1&amp;mute=1&amp;playsinline=1&amp;rel=0" id="halingWebcamFrame" name="halingWebcamFrame" referrerpolicy="strict-origin-when-cross-origin" src="about:blank" title="Ha Ling Peak live webcam"></iframe></div></div></section><section class="card calendar-card">
 <iframe class="calendar-frame" data-src="https://calendar.google.com/calendar/embed?src=munro306%40gmail.com&amp;src=rv2p0s9k59nvjup00q2547dq7m366oh2%40import.calendar.google.com&amp;src=c2e1fbb3ea22fd05c19e62cfb07b2d767a2c7fd039aea7cb8d3485bd4f713494%40group.calendar.google.com&amp;src=77e989c1kdkdvr3vo647o4kbor562sjs%40import.calendar.google.com&amp;src=01rb59pdu2n7o15fctsu4qon9htalmg4%40import.calendar.google.com&amp;src=ehs8067n96jguldfs26759pajfeafldo%40import.calendar.google.com&amp;src=kq8v9ib8o07nss1oqdmlu48nvbmhivl5%40import.calendar.google.com&amp;ctz=America%2FRegina" frameborder="0" id="familyCalendarFrame" name="familyCalendarFrame" scrolling="no" src="about:blank" title="Google family calendar"></iframe>
 </section><section class="card placeholder-card"><div class="placeholder-tile"><div><strong>Placeholder</strong><br/><span>Reserved for future dashboard content</span></div></div></section></main>
 <div class="bottom-bar"><div aria-label="Live information headlines" class="ticker-stack">
@@ -244,5 +287,87 @@ updateFinance();setInterval(updateFinance,FIN.refreshMs);
   audio.addEventListener('playing',()=>stat.textContent='Live · streaming');
   audio.addEventListener('error',()=>{if(audio.getAttribute('src')){if(idx<STREAMS.length-1){idx++;start()}else ui(false,'Stream error — press play to retry')}});
 })();
+</script><script>
+/* ===== Watchlist with intraday sparklines (Finnhub quotes) =====
+   Add more symbols here, e.g. {sym:'TSM',name:'Taiwan Semiconductor'} */
+const WATCHLIST=[
+  {sym:'ALM',  label:'ALM',     name:'Almonty Industries'},
+  {sym:'MP',   label:'MP',      name:'MP Materials'},
+  {sym:'REMX', label:'REMX',    name:'Rare Earth/Strategic Metals ETF'},
+  {sym:'SPY',  label:'S&P 500', name:'SPDR S&P 500 ETF (SPY)'},
+  {sym:'QQQ',  label:'Nasdaq',  name:'Invesco QQQ, Nasdaq-100 (QQQ)'},
+  {sym:'EWC',  label:'Canada',  name:'iShares MSCI Canada (EWC), TSX proxy'},
+  {sym:'USO',  label:'Crude',   name:'US Oil Fund (USO), WTI proxy'},
+  {sym:'GLD',  label:'Gold',    name:'SPDR Gold (GLD)'},
+  {sym:'AAPL', label:'AAPL',    name:'Apple'},
+  {sym:'GOOGL',label:'GOOGL',   name:'Alphabet (Google)'},
+  {sym:'MSFT', label:'MSFT',    name:'Microsoft'},
+  {sym:'NVDA', label:'NVDA',    name:'NVIDIA'}
+];
+const HOLD_SHARES=153101;
+const wl=document.getElementById('watchlist');
+WATCHLIST.forEach(w=>{
+  wl.insertAdjacentHTML('beforeend',`<div class="wl-row" id="wl-${w.sym}">
+    <div class="wl-sym" title="${w.name}">${w.label||w.sym}</div>
+    <div class="wl-spark"></div><div class="wl-price">--</div><div class="wl-chg">--</div></div>`);
+});
+function etParts(d=new Date()){
+  const f=new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(d);
+  const g=t=>f.find(x=>x.type===t).value;
+  return {date:`${g('year')}-${g('month')}-${g('day')}`,mins:(+g('hour')%24)*60+(+g('minute'))};
+}
+const OPEN=570, CLOSE=960; // 9:30–16:00 ET
+function loadSamples(sym){try{return JSON.parse(localStorage.getItem('spark_'+sym))||{}}catch(_){return {}}}
+function recordSample(sym,q){
+  const et=etParts(); let s=loadSamples(sym);
+  if(s.date!==et.date)s={date:et.date,pts:[]};
+  if(et.mins>=OPEN&&et.mins<=CLOSE+2){
+    const m=Math.min(et.mins,CLOSE), last=s.pts[s.pts.length-1];
+    if(!last||last[0]!==m)s.pts.push([m,q.c]);else last[1]=q.c;
+  }
+  localStorage.setItem('spark_'+sym,JSON.stringify(s));
+  return s;
+}
+function drawSpark(el,q,s){
+  const et=etParts(), today=s.date===et.date;
+  let pts=(today?s.pts:[]).slice();
+  // seed from open when no history yet; full-width if market closed
+  const nowX=(et.mins>=OPEN&&et.mins<=CLOSE)?et.mins:CLOSE;
+  if(!pts.length||pts[0][0]>OPEN+1)pts.unshift([OPEN,q.o||q.pc]);
+  if(pts[pts.length-1][0]<nowX)pts.push([nowX,q.c]);
+  const W=100,H=40,ys=pts.map(p=>p[1]).concat(q.pc);
+  let lo=Math.min(...ys),hi=Math.max(...ys);if(hi-lo<1e-9){hi+=.01;lo-=.01}
+  const pad=(hi-lo)*.08;lo-=pad;hi+=pad;
+  const X=m=>((m-OPEN)/(CLOSE-OPEN))*W, Y=v=>H-((v-lo)/(hi-lo))*H, base=Y(q.pc);
+  const line=pts.map((p,i)=>(i?'L':'M')+X(p[0]).toFixed(2)+' '+Y(p[1]).toFixed(2)).join(' ');
+  const area=line+` L${X(pts[pts.length-1][0]).toFixed(2)} ${base.toFixed(2)} L${X(pts[0][0]).toFixed(2)} ${base.toFixed(2)} Z`;
+  const up=q.c>=q.pc, col=up?'#34d399':'#f87171';
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+    <path d="${area}" fill="${col}" fill-opacity=".22"/>
+    <line x1="0" x2="${W}" y1="${base}" y2="${base}" stroke="#9bacbd" stroke-width="1" stroke-dasharray="1.5 2" vector-effect="non-scaling-stroke"/>
+    <path d="${line}" fill="none" stroke="${col}" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>`;
+}
+const fmtUSD=(v)=>v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+async function updateWatchlist(){
+  const key=finKey(), status=document.getElementById('quoteStatus'); let ok=0, almDay=null;
+  await Promise.all(WATCHLIST.map(async w=>{
+    const row=document.getElementById('wl-'+w.sym);
+    try{
+      const r=await fetch('https://finnhub.io/api/v1/quote?symbol='+w.sym+'&token='+encodeURIComponent(key),{cache:'no-store'});
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      const q=await r.json(); if(!q||!q.c)throw new Error('no price');
+      const cls=q.d>0?'wl-up':q.d<0?'wl-down':'wl-flat', sign=q.d>0?'+':'';
+      row.querySelector('.wl-price').textContent=fmtUSD(q.c);
+      const chg=row.querySelector('.wl-chg'); chg.className='wl-chg '+cls;
+      chg.textContent=`${sign}${fmtUSD(q.d)} (${sign}${q.dp.toFixed(2)}%)`;
+      drawSpark(row.querySelector('.wl-spark'),q,recordSample(w.sym,q));
+      if(w.sym==='ALM')almDay=HOLD_SHARES*q.d;
+      ok++;
+    }catch(e){row.querySelector('.wl-chg').textContent='Unavailable'}
+  }));
+  const t=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Regina',hour:'numeric',minute:'2-digit'}).format(new Date());
+  status.textContent=ok?(almDay!==null?`ALM holding ${almDay>=0?'+':'-'}US$${Math.abs(Math.round(almDay)).toLocaleString('en-US')} · `:'')+t:'Quotes unavailable · retrying';
+}
+updateWatchlist();setInterval(updateWatchlist,60000);
 </script></body>
 </html>
