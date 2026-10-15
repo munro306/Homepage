@@ -118,6 +118,13 @@ main.grid>.quotes-card{container-type:inline-size;display:flex;flex-direction:co
 .radio-select{width:100%;max-width:340px;background:#07111f;color:#f7fbff;border:1px solid #2b4a66;border-radius:7px;padding:6px 8px;font-size:14px;font-weight:700;cursor:pointer}
 .radio-select:focus{outline:2px solid #e2007a;outline-offset:1px}
 .radio-brand{min-width:64px;text-align:center;font-size:14px!important;transition:background-color .3s}
+</style><style>
+/* One line per ticker: SYMBOL  price  change(%) */
+.wl-row{grid-template-columns:minmax(0,1fr) auto auto!important;grid-template-areas:"sym price chg"!important;column-gap:6px!important;align-items:baseline!important}
+.wl-sym{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wl-price,.wl-chg{white-space:nowrap;text-align:right}
+.wl-spark{display:none!important}
+@container (min-width:260px){.wl-row{grid-template-columns:minmax(0,1fr) auto auto!important;grid-template-areas:"sym price chg"!important}}
 </style></head>
 <body>
 <div class="wrap">
@@ -288,7 +295,7 @@ const wl=document.getElementById('watchlist');
 WATCHLIST.forEach(w=>{
   wl.insertAdjacentHTML('beforeend',`<div class="wl-row" id="wl-${w.sym}">
     <div class="wl-sym" title="${w.name}">${w.label||w.sym}</div>
-    <div class="wl-spark"></div><div class="wl-price">--</div><div class="wl-chg">--</div></div>`);
+    <div class="wl-price">--</div><div class="wl-chg">--</div></div>`);
 });
 function etParts(d=new Date()){
   const f=new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(d);
@@ -339,7 +346,7 @@ async function updateWatchlist(){
       row.querySelector('.wl-price').textContent=fmtUSD(q.c);
       const chg=row.querySelector('.wl-chg'); chg.className='wl-chg '+cls;
       chg.textContent=`${sign}${fmtUSD(q.d)} (${sign}${q.dp.toFixed(2)}%)`;
-      drawSpark(row.querySelector('.wl-spark'),q,recordSample(w.sym,q));
+      
       if(w.sym==='ALM')almDay=HOLD_SHARES*q.d;
       ok++;
     }catch(e){row.querySelector('.wl-chg').textContent='Unavailable'}
