@@ -168,6 +168,32 @@ main.grid{gap:0!important}
 /* Cross-fade only: no photo zoom or movement */
 .photo-slide{transform:none!important;transition:opacity 1.6s ease!important}
 .photo-slide.active{transform:none!important}
+</style><style>
+/* Slightly rounded calendar and photo tiles */
+.calendar-card .calendar-frame,.photo-slideshow{border-radius:8px!important;overflow:hidden!important}
+/* Larger Wind / Humidity / Precip. row */
+.weather-card .stat,.weather-card .stat strong{font-size:12px!important}
+/* Larger day names (Today / Wed / Thu ...) without changing temperatures */
+.weather-card .day{font-size:12px!important}
+.weather-card .day .hi{font-size:15px!important}
+.weather-card .day .lo{font-size:13px!important}
+</style><style>
+/* Webcam fills its tile, same height as calendar and photos */
+main.grid>.webcam-card{display:flex!important;flex-direction:column!important}
+.webcam-card .webcam-tile{flex:1 1 auto!important;display:flex!important;min-height:0!important}
+.webcam-card .video{position:relative!important;flex:1 1 auto!important;height:auto!important;min-height:374px!important;overflow:hidden!important;container-type:size}
+.webcam-card .video iframe{position:absolute!important;top:50%!important;left:50%!important;
+  width:max(100cqw,177.78cqh)!important;height:max(100cqh,56.25cqw)!important;
+  transform:translate(-50%,-50%)!important;border:0!important}
+</style><style>
+.ticker.sask .ticker-label{background:#7c3aed}
+.radio-now{font-size:13px;font-weight:700;color:#f7fbff;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.radio-now .np-artist{color:#9bacbd;font-weight:600}
+</style><style>
+/* ALM chart fills full tile height (note removed) */
+main.grid>section.stock{display:flex!important;flex-direction:column!important}
+section.stock .quote{flex:1 1 auto!important;height:auto!important;min-height:440px!important}
+section.stock .tradingview-widget-container,section.stock .tradingview-widget-container__widget{height:100%!important;min-height:440px!important}
 </style></head>
 <body>
 <div class="wrap">
@@ -194,7 +220,7 @@ main.grid{gap:0!important}
   }
   </script>
 </div></div>
-<div class="note">Market data may be delayed. <a class="stockLink" href="https://www.nasdaq.com/market-activity/stocks/alm" rel="noopener" target="_blank">Open ALM on Nasdaq</a></div>
+
 </section><section class="card quotes-card"><div class="watchlist" id="watchlist"></div><div class="q-status" id="quoteStatus">Quotes: connecting…</div></section><section class="card finance-card"><div class="finance-tile">
 <div class="finance-row" id="finAlmontyRow"><span>Almonty</span><strong id="finAlmonty">$2,109,689</strong></div>
 <div class="finance-row"><span>PEPP</span><strong>$1,002,196</strong></div>
@@ -230,6 +256,7 @@ main.grid{gap:0!important}
 <div class="ticker news"><div class="ticker-label">News</div><div class="ticker-window"><div class="ticker-track" id="newsTicker"><span>Loading live CBC News headlines…</span></div></div></div>
 <div class="ticker sports"><div class="ticker-label">Sports</div><div class="ticker-window"><div class="ticker-track" id="sportsTicker"><span>Loading live CBC Sports headlines…</span></div></div></div>
 <div class="ticker business"><div class="ticker-label">Business</div><div class="ticker-window"><div class="ticker-track" id="businessTicker"><span>Loading live CBC Business headlines…</span></div></div></div>
+<div class="ticker sask"><div class="ticker-label">Sask</div><div class="ticker-window"><div class="ticker-track" id="saskTicker"><span>Loading Saskatchewan headlines…</span></div></div></div>
 </div>
 <div aria-label="Radio player" class="radio-player">
 <div class="radio-brand" id="radioBrand">FIP</div>
@@ -237,6 +264,7 @@ main.grid{gap:0!important}
 <div class="radio-info">
 <select aria-label="Choose station" class="radio-select" id="radioStation"></select>
 <div class="radio-status" id="fipStatus">Live stream · press play</div>
+<div class="radio-now" id="radioNow">♫ —</div>
 </div>
 <label class="radio-vol"><span>Vol</span><input id="fipVolume" max="1" min="0" step="0.05" type="range" value="0.6"/></label>
 <a class="radio-link" href="https://www.radiofrance.fr/fip" id="radioLink" rel="noopener noreferrer" target="_blank">Website</a>
@@ -253,14 +281,36 @@ function renderWeather(w){const wi=info(w.current.weather_code);return `<div cla
 async function loadCity(p,lat,lon,tz){const l=document.getElementById(p+'Loading'),b=document.getElementById(p+'Weather'),e=document.getElementById(p+'Error');try{const r=await fetch(weatherUrl(lat,lon,tz));if(!r.ok)throw Error();b.innerHTML=renderWeather(await r.json());b.style.display='block';l.style.display='none'}catch(_){l.style.display='none';e.textContent='Could not load weather.'}}
 function loadAll(){loadCity('regina',50.4452,-104.6189,'America/Regina');loadCity('canmore',51.089,-115.359,'America/Edmonton')}loadAll();setInterval(loadAll,900000);
 
+/* ===== Headline tickers: several sources per category, several fetch routes ===== */
 const LIVE_FEEDS={
-  news:'https://www.cbc.ca/webfeed/rss/rss-topstories',
-  sports:'https://www.cbc.ca/webfeed/rss/rss-sports',
-  business:'https://www.cbc.ca/webfeed/rss/rss-business'
+  news:['https://www.cbc.ca/webfeed/rss/rss-topstories','https://globalnews.ca/feed/','https://www.cbc.ca/webfeed/rss/rss-canada'],
+  sports:['https://www.cbc.ca/webfeed/rss/rss-sports','https://globalnews.ca/sports/feed/','https://www.tsn.ca/datafiles/rss/Stories.xml'],
+  business:['https://www.cbc.ca/webfeed/rss/rss-business','https://globalnews.ca/money/feed/','https://financialpost.com/feed'],
+  sask:['https://www.cbc.ca/webfeed/rss/rss-canada-saskatchewan','https://globalnews.ca/regina/feed/','https://regina.ctvnews.ca/rss/ctv-news-regina-1.822392']
 };
-const RSS_PROXY='https://api.rss2json.com/v1/api.json?rss_url=';
 function safeText(value){const d=document.createElement('div');d.textContent=value||'';return d.innerHTML}
-const tickerState={news:{items:[],index:0,timer:null},sports:{items:[],index:0,timer:null},business:{items:[],index:0,timer:null}};
+function parseRssXml(text){
+  const doc=new DOMParser().parseFromString(text,'text/xml');
+  const nodes=[...doc.querySelectorAll('item, entry')];
+  return nodes.map(n=>{
+    const t=n.querySelector('title');const l=n.querySelector('link');
+    return {title:t?t.textContent.trim():'',link:l?(l.getAttribute('href')||l.textContent.trim()):'#'};
+  }).filter(x=>x.title);
+}
+async function fetchFeed(url){
+  // Route 1: rss2json (JSON)
+  try{
+    const r=await fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(url),{cache:'no-store'});
+    if(r.ok){const d=await r.json();if(d.status==='ok'&&d.items&&d.items.length)return d.items.map(i=>({title:i.title,link:i.link}));}
+  }catch(_){}
+  // Routes 2-3: raw XML through public CORS proxies
+  const proxies=[u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),u=>'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u)];
+  for(const px of proxies){
+    try{const r=await fetch(px(url),{cache:'no-store'});if(r.ok){const items=parseRssXml(await r.text());if(items.length)return items;}}catch(_){}
+  }
+  throw new Error('unavailable');
+}
+const tickerState={};Object.keys(LIVE_FEEDS).forEach(k=>tickerState[k]={items:[],index:0,timer:null});
 function showTickerItem(type,immediate=false){
   const target=document.getElementById(type+'Ticker'),state=tickerState[type];
   if(!state.items.length)return;
@@ -272,17 +322,18 @@ function showTickerItem(type,immediate=false){
 function startTickerRotation(type){const state=tickerState[type];clearInterval(state.timer);state.timer=setInterval(()=>{state.index=(state.index+1)%state.items.length;showTickerItem(type)},15*1000)}
 async function loadTicker(type){
   const target=document.getElementById(type+'Ticker'),state=tickerState[type];
-  try{
-    const response=await fetch(RSS_PROXY+encodeURIComponent(LIVE_FEEDS[type]),{cache:'no-store'});
-    if(!response.ok)throw new Error('HTTP '+response.status);
-    const data=await response.json();
-    if(data.status!=='ok'||!Array.isArray(data.items)||!data.items.length)throw new Error('Feed unavailable');
-    state.items=data.items.slice(0,12).map(item=>({title:item.title,link:item.link}));state.index=0;showTickerItem(type,true);startTickerRotation(type);
-  }catch(error){clearInterval(state.timer);state.items=[];target.classList.remove('is-fading');target.innerHTML='<span>Live feed temporarily unavailable. Click the label to try again.</span>'}
+  for(const url of LIVE_FEEDS[type]){
+    try{
+      const items=await fetchFeed(url);
+      state.items=items.slice(0,15);state.index=0;showTickerItem(type,true);startTickerRotation(type);return;
+    }catch(_){}
+  }
+  if(!state.items.length){clearInterval(state.timer);target.innerHTML='<span>Headlines unavailable right now. Click the label to retry.</span>'}
 }
-function loadAllTickers(){Object.keys(LIVE_FEEDS).forEach(loadTicker)}
+function loadAllTickers(){Object.keys(LIVE_FEEDS).forEach((k,i)=>setTimeout(()=>loadTicker(k),i*700))}
 loadAllTickers();setInterval(loadAllTickers,15*60*1000);
 document.querySelectorAll('.ticker').forEach(t=>t.querySelector('.ticker-label').addEventListener('click',()=>loadTicker(t.classList[1])));
+
 
 
 
@@ -445,13 +496,13 @@ updateWatchlist();setInterval(updateWatchlist,60000);
 (function(){
   const STATIONS=[
     {id:'groovesalad', name:'SomaFM Groove Salad · chill electronic', short:'Groove Salad', color:'#0e7490', site:'https://somafm.com/groovesalad/',
-      urls:['https://ice2.somafm.com/groovesalad-128-mp3','https://ice4.somafm.com/groovesalad-128-mp3']},
+      urls:['https://ice5.somafm.com/groovesalad-128-mp3','https://ice6.somafm.com/groovesalad-128-mp3','https://ice2.somafm.com/groovesalad-128-mp3','https://ice1.somafm.com/groovesalad-128-mp3','https://ice5.somafm.com/groovesalad-128-aac']},
     {id:'rpmellow', name:'Radio Paradise Mellow · laid-back mix', short:'RP Mellow', color:'#4d7c0f', site:'https://radioparadise.com/',
       urls:['https://stream.radioparadise.com/mellow-320','https://stream.radioparadise.com/mellow-128']},
     {id:'fipjazz', name:'FIP Jazz · classic & modern jazz', short:'FIP Jazz', color:'#9d174d', site:'https://www.radiofrance.fr/fip/radio-jazz',
       urls:['https://icecast.radiofrance.fr/fipjazz-hifi.aac','https://icecast.radiofrance.fr/fipjazz-midfi.mp3']},
     {id:'beatblender', name:'SomaFM Beat Blender · deep house, downtempo', short:'Beat Blender', color:'#6d28d9', site:'https://somafm.com/beatblender/',
-      urls:['https://ice2.somafm.com/beatblender-128-mp3','https://ice4.somafm.com/beatblender-128-mp3']},
+      urls:['https://ice5.somafm.com/beatblender-128-mp3','https://ice6.somafm.com/beatblender-128-mp3','https://ice2.somafm.com/beatblender-128-mp3','https://ice1.somafm.com/beatblender-128-mp3','https://ice5.somafm.com/beatblender-128-aac']},
     {id:'fip', name:'FIP · eclectic (the original)', short:'FIP', color:'#e2007a', site:'https://www.radiofrance.fr/fip',
       urls:['https://icecast.radiofrance.fr/fip-hifi.aac','https://icecast.radiofrance.fr/fip-midfi.mp3']},
     {id:'rpmain', name:'Radio Paradise · eclectic rock/indie/world', short:'Radio Paradise', color:'#15803d', site:'https://radioparadise.com/',
@@ -459,7 +510,7 @@ updateWatchlist();setInterval(updateWatchlist,60000);
     {id:'fipgroove', name:'FIP Groove · funk, soul, hip-hop', short:'FIP Groove', color:'#c2410c', site:'https://www.radiofrance.fr/fip/radio-groove',
       urls:['https://icecast.radiofrance.fr/fipgroove-hifi.aac','https://icecast.radiofrance.fr/fipgroove-midfi.mp3']},
     {id:'indiepop', name:'SomaFM Indie Pop Rocks! · upbeat indie', short:'Indie Pop', color:'#be123c', site:'https://somafm.com/indiepop/',
-      urls:['https://ice2.somafm.com/indiepop-128-mp3','https://ice4.somafm.com/indiepop-128-mp3']},
+      urls:['https://ice5.somafm.com/indiepop-128-mp3','https://ice6.somafm.com/indiepop-128-mp3','https://ice2.somafm.com/indiepop-128-mp3','https://ice1.somafm.com/indiepop-128-mp3','https://ice5.somafm.com/indiepop-128-aac']},
     {id:'fipelectro', name:'FIP Electro · electronic, dance', short:'FIP Electro', color:'#1d4ed8', site:'https://www.radiofrance.fr/fip/radio-electro',
       urls:['https://icecast.radiofrance.fr/fipelectro-hifi.aac','https://icecast.radiofrance.fr/fipelectro-midfi.mp3']},
     {id:'rprock', name:'Radio Paradise Rock · high energy rock', short:'RP Rock', color:'#b91c1c', site:'https://radioparadise.com/',
@@ -475,17 +526,17 @@ updateWatchlist();setInterval(updateWatchlist,60000);
     {id:'rpglobal', name:'Radio Paradise Global · world, eclectic', short:'RP Global', color:'#166534', site:'https://radioparadise.com/',
       urls:['https://stream.radioparadise.com/global-320','https://stream.radioparadise.com/global-128']},
     {id:'dronezone', name:'SomaFM Drone Zone · ambient, deep focus', short:'Drone Zone', color:'#1e3a8a', site:'https://somafm.com/dronezone/',
-      urls:['https://ice2.somafm.com/dronezone-128-mp3','https://ice4.somafm.com/dronezone-128-mp3']},
+      urls:['https://ice5.somafm.com/dronezone-128-mp3','https://ice6.somafm.com/dronezone-128-mp3','https://ice2.somafm.com/dronezone-128-mp3','https://ice1.somafm.com/dronezone-128-mp3','https://ice5.somafm.com/dronezone-128-aac']},
     {id:'lush', name:'SomaFM Lush · mellow vocals, electronica', short:'Lush', color:'#7e22ce', site:'https://somafm.com/lush/',
-      urls:['https://ice2.somafm.com/lush-128-mp3','https://ice4.somafm.com/lush-128-mp3']},
+      urls:['https://ice5.somafm.com/lush-128-mp3','https://ice6.somafm.com/lush-128-mp3','https://ice2.somafm.com/lush-128-mp3','https://ice1.somafm.com/lush-128-mp3','https://ice5.somafm.com/lush-128-aac']},
     {id:'secretagent', name:'SomaFM Secret Agent · lounge, spy-jazz', short:'Secret Agent', color:'#374151', site:'https://somafm.com/secretagent/',
-      urls:['https://ice2.somafm.com/secretagent-128-mp3','https://ice4.somafm.com/secretagent-128-mp3']},
+      urls:['https://ice5.somafm.com/secretagent-128-mp3','https://ice6.somafm.com/secretagent-128-mp3','https://ice2.somafm.com/secretagent-128-mp3','https://ice1.somafm.com/secretagent-128-mp3','https://ice5.somafm.com/secretagent-128-aac']},
     {id:'bagel', name:'SomaFM BAGeL Radio · alternative rock', short:'BAGeL Radio', color:'#0369a1', site:'https://somafm.com/bagel/',
-      urls:['https://ice2.somafm.com/bagel-128-mp3','https://ice4.somafm.com/bagel-128-mp3']},
+      urls:['https://ice5.somafm.com/bagel-128-mp3','https://ice6.somafm.com/bagel-128-mp3','https://ice2.somafm.com/bagel-128-mp3','https://ice1.somafm.com/bagel-128-mp3','https://ice5.somafm.com/bagel-128-aac']},
     {id:'poptron', name:'SomaFM PopTron · indie dance, electropop', short:'PopTron', color:'#ea580c', site:'https://somafm.com/poptron/',
-      urls:['https://ice2.somafm.com/poptron-128-mp3','https://ice4.somafm.com/poptron-128-mp3']},
+      urls:['https://ice5.somafm.com/poptron-128-mp3','https://ice6.somafm.com/poptron-128-mp3','https://ice2.somafm.com/poptron-128-mp3','https://ice1.somafm.com/poptron-128-mp3','https://ice5.somafm.com/poptron-128-aac']},
     {id:'u80s', name:'SomaFM Underground 80s · new wave, synth-pop', short:'Underground 80s', color:'#c026d3', site:'https://somafm.com/u80s/',
-      urls:['https://ice2.somafm.com/u80s-128-mp3','https://ice4.somafm.com/u80s-128-mp3']}
+      urls:['https://ice5.somafm.com/u80s-128-mp3','https://ice6.somafm.com/u80s-128-mp3','https://ice2.somafm.com/u80s-128-mp3','https://ice1.somafm.com/u80s-128-mp3','https://ice5.somafm.com/u80s-128-aac']}
   ];
   STATIONS.sort((a,b)=>a.name.localeCompare(b.name,'en',{sensitivity:'base'}));
   const audio=document.getElementById('fipAudio'), btn=document.getElementById('fipPlay'),
@@ -504,7 +555,9 @@ updateWatchlist();setInterval(updateWatchlist,60000);
   function ui(playing,msg){btn.innerHTML=playing?'&#10074;&#10074;':'&#9654;';btn.classList.toggle('playing',playing);btn.setAttribute('aria-label',playing?'Pause':'Play');stat.textContent=msg}
   async function start(){
     wantPlay=true;
-    audio.src=current.urls[urlIdx]+(current.urls[urlIdx].includes('?')?'&':'?')+'t='+Date.now();
+    const u=current.urls[urlIdx];
+    // SomaFM servers: use the clean stream URL (no cache-busting query string)
+    audio.src=/somafm\.com/.test(u)?u:u+(u.includes('?')?'&':'?')+'t='+Date.now();
     ui(true,'Connecting to '+current.short+'…');
     try{await audio.play();ui(true,'Live · '+current.short)}
     catch(e){if(urlIdx<current.urls.length-1){urlIdx++;return start()}ui(false,'Could not start '+current.short+' — try again')}
@@ -594,6 +647,54 @@ updateWatchlist();setInterval(updateWatchlist,60000);
     if(!photos.length){fail('No photos found.<br>Add JPG, JPEG, PNG or WebP files to the <strong>Photos</strong> folder.');return}
     order=shuffle([...photos.keys()]);show(0);restart();
   }).catch(e=>fail(`Photo folder not found.<br><small>${e.message}</small>`));
+})();
+</script><script>
+/* ===== Radio now playing (song / artist) ===== */
+(function(){
+  const sel=document.getElementById('radioStation'),out=document.getElementById('radioNow'),audio=document.getElementById('fipAudio');
+  const PROXIES=[u=>u,u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),u=>'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u)];
+  async function getJSON(url){
+    for(const px of PROXIES){try{const r=await fetch(px(url),{cache:'no-store'});if(r.ok)return await r.json()}catch(_){}}
+    throw new Error('no data');
+  }
+  const FIP={fip:[7,'fip'],fipjazz:[65,'fip_jazz'],fipgroove:[66,'fip_groove'],fipelectro:[74,'fip_electro'],fiprock:[64,'fip_rock'],fippop:[78,'fip_pop'],fipworld:[69,'fip_world']};
+  const RP={rpmain:0,rpmellow:1,rprock:2,rpglobal:3};
+  const SOMA=['groovesalad','beatblender','indiepop','dronezone','lush','secretagent','bagel','poptron','u80s'];
+  async function fipNow(id){
+    const [num,slug]=FIP[id];
+    try{ // Radio France page API
+      const d=await getJSON('https://www.radiofrance.fr/fip/api/live/webradios/'+slug);
+      const n=d.now||d;const t=n.firstLine&&(n.firstLine.title||n.firstLine),a=n.secondLine&&(n.secondLine.title||n.secondLine);
+      if(t&&typeof t==='string')return {title:t,artist:typeof a==='string'?a:''};
+      if(n.song)return {title:n.song.title,artist:(n.song.interpreters||[]).join(', ')};
+    }catch(_){}
+    const d=await getJSON('https://api.radiofrance.fr/livemeta/pull/'+num); // legacy live metadata
+    const lv=d.levels[0],st=d.steps[lv.items[lv.position]];
+    return {title:st.title,artist:st.authors||st.performers||''};
+  }
+  async function lookup(id){
+    if(FIP[id])return fipNow(id);
+    if(id in RP){const d=await getJSON('https://api.radioparadise.com/api/now_playing?chan='+RP[id]);return {title:d.title,artist:d.artist}}
+    if(SOMA.includes(id)){const d=await getJSON('https://somafm.com/songs/'+id+'.json');const x=d.songs[0];return {title:x.title,artist:x.artist}}
+    if(id==='kexp'){const d=await getJSON('https://api.kexp.org/v2/plays/?limit=1');const x=d.results[0];
+      if(x.play_type&&x.play_type!=='trackplay')return {title:'DJ talking / airbreak',artist:''};return {title:x.song,artist:x.artist}}
+    throw new Error('unknown');
+  }
+  const esc=v=>{const d=document.createElement('div');d.textContent=v||'';return d.innerHTML};
+  let timer=null,seq=0;
+  async function update(){
+    const id=sel.value,my=++seq;
+    try{
+      const n=await lookup(id);if(my!==seq)return;
+      if(!n||!n.title)throw 0;
+      out.innerHTML='&#9835; '+esc(n.title)+(n.artist?' <span class="np-artist">— '+esc(n.artist)+'</span>':'');
+      out.title=(n.title||'')+(n.artist?' — '+n.artist:'');
+    }catch(_){if(my===seq){out.textContent='♫ Song info unavailable for this station';out.title=''}}
+  }
+  function schedule(){clearInterval(timer);update();timer=setInterval(update,20000)}
+  sel.addEventListener('change',()=>{out.textContent='♫ Loading…';schedule()});
+  audio.addEventListener('playing',schedule);
+  setTimeout(schedule,500);
 })();
 </script></body>
 </html>
