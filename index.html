@@ -129,6 +129,22 @@ main.grid>.quotes-card{container-type:inline-size;display:flex;flex-direction:co
 /* ALM chart: at least 420px tall */
 section.stock .quote{height:420px!important;min-height:420px!important}
 section.stock .tradingview-widget-container,section.stock .tradingview-widget-container__widget{height:100%!important;min-height:420px}
+</style><style>
+/* Bottom-right family photo slideshow */
+main.grid>.photo-card{grid-column:span 8!important;min-height:380px;padding:14px;min-width:0}
+.photo-slideshow{position:relative;width:100%;height:100%;min-height:350px;overflow:hidden;border-radius:12px;background:#0c1927}
+.photo-slide{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.015);transition:opacity 1.6s ease,transform 8s ease}
+.photo-slide.active{opacity:1;transform:scale(1)}
+.photo-shade{position:absolute;inset:auto 0 0;height:74px;background:linear-gradient(transparent,rgba(0,0,0,.68));pointer-events:none}
+.photo-message{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:#9bacbd;font-size:13px;line-height:1.45}
+.photo-controls{position:absolute;left:10px;right:10px;bottom:9px;display:flex;align-items:center;justify-content:flex-end;gap:7px;opacity:0;transition:opacity .25s ease}
+.photo-slideshow:hover .photo-controls,.photo-controls:focus-within{opacity:1}
+.photo-controls button{width:29px;height:29px;border:1px solid rgba(255,255,255,.28);border-radius:50%;background:rgba(7,17,31,.72);color:#fff;cursor:pointer;font-size:12px}
+.photo-controls button:hover{background:rgba(37,99,235,.9)}
+.photo-controls span{font-size:10px;color:#fff;background:rgba(7,17,31,.66);padding:5px 8px;border-radius:12px}
+@media(max-width:1250px){main.grid>.photo-card{grid-column:span 8!important}}
+@media(max-width:800px){main.grid>.photo-card{grid-column:span 24!important}}
+@media(hover:none){.photo-controls{opacity:1}}
 </style></head>
 <body>
 <div class="wrap">
@@ -173,7 +189,20 @@ section.stock .tradingview-widget-container,section.stock .tradingview-widget-co
 <div class="weather-city"><h3>Canmore, Alberta</h3><div class="weather-loading" id="canmoreLoading">Loading weather…</div><div id="canmoreWeather" style="display:none"></div><div class="error" id="canmoreError"></div></div>
 </section><section class="card webcam-card"><div class="webcam-tile"><div class="cam-label">Ha Ling Peak · Drake Pub and Inn</div><div class="video"><iframe allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen="" data-src="https://www.youtube.com/embed/RdRmXqnBZ-c?autoplay=1&amp;mute=1&amp;playsinline=1&amp;rel=0" id="halingWebcamFrame" name="halingWebcamFrame" referrerpolicy="strict-origin-when-cross-origin" src="about:blank" title="Ha Ling Peak live webcam"></iframe></div></div></section><section class="card calendar-card">
 <iframe class="calendar-frame" data-src="https://calendar.google.com/calendar/embed?src=munro306%40gmail.com&amp;src=rv2p0s9k59nvjup00q2547dq7m366oh2%40import.calendar.google.com&amp;src=c2e1fbb3ea22fd05c19e62cfb07b2d767a2c7fd039aea7cb8d3485bd4f713494%40group.calendar.google.com&amp;src=77e989c1kdkdvr3vo647o4kbor562sjs%40import.calendar.google.com&amp;src=01rb59pdu2n7o15fctsu4qon9htalmg4%40import.calendar.google.com&amp;src=ehs8067n96jguldfs26759pajfeafldo%40import.calendar.google.com&amp;src=kq8v9ib8o07nss1oqdmlu48nvbmhivl5%40import.calendar.google.com&amp;ctz=America%2FRegina" frameborder="0" id="familyCalendarFrame" name="familyCalendarFrame" scrolling="no" src="about:blank" title="Google family calendar"></iframe>
-</section><section class="card placeholder-card"><div class="placeholder-tile"><div><strong>Placeholder</strong><br/><span>Reserved for future dashboard content</span></div></div></section></main>
+</section><section class="card photo-card">
+<div aria-label="Family photo slideshow" class="photo-slideshow" id="familySlideshow">
+<img alt="Family slideshow photo" class="photo-slide active" id="photoSlideA"/>
+<img alt="Family slideshow photo" class="photo-slide" id="photoSlideB"/>
+<div class="photo-shade"></div>
+<div class="photo-message" id="photoMessage">Looking for photos…</div>
+<div class="photo-controls">
+<button aria-label="Previous photo" id="photoPrev" title="Previous photo" type="button">❮</button>
+<span id="photoCount">0 / 0</span>
+<button aria-label="Next photo" id="photoNext" title="Next photo" type="button">❯</button>
+<button aria-label="Pause slideshow" id="photoPause" title="Pause slideshow" type="button">❚❚</button>
+</div>
+</div>
+</section></main>
 <div class="bottom-bar"><div aria-label="Live information headlines" class="ticker-stack">
 <div class="ticker news"><div class="ticker-label">News</div><div class="ticker-window"><div class="ticker-track" id="newsTicker"><span>Loading live CBC News headlines…</span></div></div></div>
 <div class="ticker sports"><div class="ticker-label">Sports</div><div class="ticker-window"><div class="ticker-track" id="sportsTicker"><span>Loading live CBC Sports headlines…</span></div></div></div>
@@ -458,6 +487,81 @@ updateWatchlist();setInterval(updateWatchlist,60000);
   audio.addEventListener('playing',()=>stat.textContent='Live · '+current.short);
   audio.addEventListener('error',()=>{if(wantPlay&&audio.getAttribute('src')){if(urlIdx<current.urls.length-1){urlIdx++;start()}else ui(false,'Stream error — press play to retry')}});
   applyStation();
+})();
+</script><script>
+/* ===== Family photo slideshow =====
+   Put JPG/JPEG/PNG/WebP files in a repository folder named: photos
+   On standard GitHub Pages URLs, this script automatically reads that folder.
+   For a custom domain, fill in owner and repo below. */
+(function(){
+  const PHOTO_CONFIG={
+    folder:'photos',
+    intervalMs:45000,
+    owner:'', // Optional for a custom domain, e.g. 'your-github-name'
+    repo:''   // Optional for a custom domain, e.g. 'your-repository-name'
+  };
+  const allowed=/\.(jpe?g|png|webp|gif)$/i;
+  const msg=document.getElementById('photoMessage'),count=document.getElementById('photoCount');
+  const a=document.getElementById('photoSlideA'),b=document.getElementById('photoSlideB');
+  let photos=[],order=[],position=0,front=a,timer=null,paused=false;
+
+  function githubRepo(){
+    if(PHOTO_CONFIG.owner&&PHOTO_CONFIG.repo)return {owner:PHOTO_CONFIG.owner,repo:PHOTO_CONFIG.repo};
+    const host=location.hostname.toLowerCase();
+    if(!host.endsWith('.github.io'))return null;
+    const owner=host.split('.')[0];
+    const first=location.pathname.split('/').filter(Boolean)[0];
+    return {owner,repo:first||owner+'.github.io'};
+  }
+  function shuffle(list){
+    const x=[...list];
+    for(let i=x.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]]}
+    return x;
+  }
+  async function discoverPhotos(){
+    const gh=githubRepo();
+    if(gh){
+      const api=`https://api.github.com/repos/${encodeURIComponent(gh.owner)}/${encodeURIComponent(gh.repo)}/contents/${encodeURIComponent(PHOTO_CONFIG.folder)}`;
+      const r=await fetch(api,{headers:{Accept:'application/vnd.github+json'},cache:'no-store'});
+      if(!r.ok)throw new Error(`GitHub folder lookup returned ${r.status}`);
+      const items=await r.json();
+      return items.filter(x=>x.type==='file'&&allowed.test(x.name)).map(x=>x.download_url);
+    }
+    // Custom-domain fallback: photos/photos.json must contain ["photo1.jpg","photo2.jpg"]
+    const r=await fetch(`${PHOTO_CONFIG.folder}/photos.json`,{cache:'no-store'});
+    if(!r.ok)throw new Error('Add owner and repo in PHOTO_CONFIG, or create photos/photos.json');
+    const files=await r.json();
+    return files.filter(x=>allowed.test(x)).map(x=>`${PHOTO_CONFIG.folder}/${encodeURIComponent(x)}`);
+  }
+  function preload(src){return new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>resolve(src);i.onerror=reject;i.src=src})}
+  async function show(index,direction=1){
+    if(!photos.length)return;
+    position=(index+order.length)%order.length;
+    const src=photos[order[position]],back=front===a?b:a;
+    try{
+      await preload(src);
+      back.src=src;back.classList.add('active');front.classList.remove('active');front=back;
+      msg.style.display='none';count.textContent=`${position+1} / ${photos.length}`;
+    }catch(_){
+      order.splice(position,1);
+      if(order.length)show(direction>0?position:position-1,direction); else fail('No supported photos could be loaded.');
+    }
+  }
+  function next(){if(position===order.length-1){order=shuffle(order);position=-1}show(position+1,1)}
+  function previous(){show(position-1,-1)}
+  function restart(){clearInterval(timer);if(!paused&&photos.length>1)timer=setInterval(next,PHOTO_CONFIG.intervalMs)}
+  function fail(text){msg.style.display='flex';msg.innerHTML=text;count.textContent='0 / 0'}
+  document.getElementById('photoNext').addEventListener('click',()=>{next();restart()});
+  document.getElementById('photoPrev').addEventListener('click',()=>{previous();restart()});
+  document.getElementById('photoPause').addEventListener('click',function(){
+    paused=!paused;this.innerHTML=paused?'&#9654;':'&#10074;&#10074;';
+    this.title=paused?'Resume slideshow':'Pause slideshow';this.setAttribute('aria-label',this.title);restart();
+  });
+  discoverPhotos().then(list=>{
+    photos=list;
+    if(!photos.length){fail('No photos found.<br>Add JPG, JPEG, PNG or WebP files to the <strong>photos</strong> folder.');return}
+    order=shuffle([...photos.keys()]);show(0);restart();
+  }).catch(e=>fail(`Photo folder not found.<br><small>${e.message}</small>`));
 })();
 </script></body>
 </html>
