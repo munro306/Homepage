@@ -145,6 +145,29 @@ main.grid>.photo-card{grid-column:span 8!important;min-height:380px;padding:14px
 @media(max-width:1250px){main.grid>.photo-card{grid-column:span 8!important}}
 @media(max-width:800px){main.grid>.photo-card{grid-column:span 24!important}}
 @media(hover:none){.photo-controls{opacity:1}}
+</style><style>
+/* Tight dashboard: zero gaps, 3px internal tile padding */
+.wrap{padding:0!important}
+main.grid{gap:0!important}
+.card{padding:3px!important;border-radius:0!important}
+.webcam-card,.calendar-card,.photo-card,.quotes-card,.finance-card,.weather-card,.stock{padding:3px!important}
+.webcam-card .webcam-tile{height:100%}
+.webcam-card .video{height:100%!important;min-height:374px!important;border-radius:0!important}
+.calendar-card .calendar-frame,.photo-slideshow{min-height:374px!important;border-radius:0!important}
+.bottom-bar{gap:0!important;margin-top:0!important}
+.ticker-stack{gap:0!important}
+.ticker,.radio-player{border-radius:0!important}
+.footer{margin-top:0!important;padding:3px 5px!important}
+/* Vertically centre all 18 market rows in the available tile height */
+.quotes-card{gap:0!important}
+.watchlist{height:100%!important;display:flex!important;flex-direction:column!important;justify-content:center!important;overflow:hidden!important}
+.wl-row{flex:0 0 20px!important;min-height:20px!important;padding:0 1px!important;column-gap:4px!important;line-height:20px!important;align-items:center!important}
+.wl-sym,.wl-price{font-size:11px!important;line-height:20px!important}
+.wl-chg{font-size:9px!important;line-height:20px!important}
+.q-status{font-size:8px!important;line-height:12px!important;height:12px!important;margin:0 2px!important;flex:0 0 12px!important}
+/* Cross-fade only: no photo zoom or movement */
+.photo-slide{transform:none!important;transition:opacity 1.6s ease!important}
+.photo-slide.active{transform:none!important}
 </style></head>
 <body>
 <div class="wrap">
@@ -187,7 +210,7 @@ main.grid>.photo-card{grid-column:span 8!important;min-height:380px;padding:14px
 <div class="finance-live" id="finStatus" title="Click to set or change the Finnhub API key">Live: connecting…</div></div></section><section class="card weather-card">
 <div class="weather-city"><h3>Regina, Saskatchewan</h3><div class="weather-loading" id="reginaLoading">Loading weather…</div><div id="reginaWeather" style="display:none"></div><div class="error" id="reginaError"></div></div>
 <div class="weather-city"><h3>Canmore, Alberta</h3><div class="weather-loading" id="canmoreLoading">Loading weather…</div><div id="canmoreWeather" style="display:none"></div><div class="error" id="canmoreError"></div></div>
-</section><section class="card webcam-card"><div class="webcam-tile"><div class="cam-label">Ha Ling Peak · Drake Pub and Inn</div><div class="video"><iframe allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen="" data-src="https://www.youtube.com/embed/RdRmXqnBZ-c?autoplay=1&amp;mute=1&amp;playsinline=1&amp;rel=0" id="halingWebcamFrame" name="halingWebcamFrame" referrerpolicy="strict-origin-when-cross-origin" src="about:blank" title="Ha Ling Peak live webcam"></iframe></div></div></section><section class="card calendar-card">
+</section><section class="card webcam-card"><div class="webcam-tile"><div class="video"><iframe allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen="" data-src="https://www.youtube.com/embed/RdRmXqnBZ-c?autoplay=1&amp;mute=1&amp;playsinline=1&amp;rel=0" id="halingWebcamFrame" name="halingWebcamFrame" referrerpolicy="strict-origin-when-cross-origin" src="about:blank" title="Ha Ling Peak live webcam"></iframe></div></div></section><section class="card calendar-card">
 <iframe class="calendar-frame" data-src="https://calendar.google.com/calendar/embed?src=munro306%40gmail.com&amp;src=rv2p0s9k59nvjup00q2547dq7m366oh2%40import.calendar.google.com&amp;src=c2e1fbb3ea22fd05c19e62cfb07b2d767a2c7fd039aea7cb8d3485bd4f713494%40group.calendar.google.com&amp;src=77e989c1kdkdvr3vo647o4kbor562sjs%40import.calendar.google.com&amp;src=01rb59pdu2n7o15fctsu4qon9htalmg4%40import.calendar.google.com&amp;src=ehs8067n96jguldfs26759pajfeafldo%40import.calendar.google.com&amp;src=kq8v9ib8o07nss1oqdmlu48nvbmhivl5%40import.calendar.google.com&amp;ctz=America%2FRegina" frameborder="0" id="familyCalendarFrame" name="familyCalendarFrame" scrolling="no" src="about:blank" title="Google family calendar"></iframe>
 </section><section class="card photo-card">
 <div aria-label="Family photo slideshow" class="photo-slideshow" id="familySlideshow">
@@ -341,7 +364,16 @@ const WATCHLIST=[
   {sym:'USO',  label:'Crude',   name:'US Oil Fund (USO), WTI proxy'},
   {sym:'GLD',  label:'Gold',    name:'SPDR Gold (GLD)'},
   {sym:'AAPL', label:'AAPL',    name:'Apple'},
-  {sym:'GOOGL',label:'GOOGL',   name:'Alphabet (Google)'}
+  {sym:'GOOGL',label:'GOOGL',   name:'Alphabet (Google)'},
+  {sym:'MSFT', label:'MSFT',    name:'Microsoft'},
+  {sym:'NVDA', label:'NVDA',    name:'NVIDIA'},
+  {sym:'AMZN', label:'AMZN',    name:'Amazon'},
+  {sym:'META', label:'META',    name:'Meta Platforms'},
+  {sym:'TSLA', label:'TSLA',    name:'Tesla'},
+  {sym:'UUUU', label:'UUUU',    name:'Energy Fuels'},
+  {sym:'UAMY', label:'UAMY',    name:'United States Antimony'},
+  {sym:'URA',  label:'URA',     name:'Global X Uranium ETF'},
+  {sym:'EWC',  label:'Canada',  name:'iShares MSCI Canada ETF'}
 ];
 const HOLD_SHARES=153101;
 const wl=document.getElementById('watchlist');
@@ -490,7 +522,7 @@ updateWatchlist();setInterval(updateWatchlist,60000);
 })();
 </script><script>
 /* ===== Family photo slideshow =====
-   Put JPG/JPEG/PNG/WebP files in a repository folder named: photos
+   Put JPG/JPEG/PNG/WebP files in a repository folder named: Photos
    On standard GitHub Pages URLs, this script automatically reads that folder.
    For a custom domain, fill in owner and repo below. */
 (function(){
@@ -559,7 +591,7 @@ updateWatchlist();setInterval(updateWatchlist,60000);
   });
   discoverPhotos().then(list=>{
     photos=list;
-    if(!photos.length){fail('No photos found.<br>Add JPG, JPEG, PNG or WebP files to the <strong>photos</strong> folder.');return}
+    if(!photos.length){fail('No photos found.<br>Add JPG, JPEG, PNG or WebP files to the <strong>Photos</strong> folder.');return}
     order=shuffle([...photos.keys()]);show(0);restart();
   }).catch(e=>fail(`Photo folder not found.<br><small>${e.message}</small>`));
 })();
