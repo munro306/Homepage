@@ -194,7 +194,8 @@ main.grid>.webcam-card{display:flex!important;flex-direction:column!important}
 main.grid>section.stock{display:flex!important;flex-direction:column!important}
 section.stock .quote{flex:1 1 auto!important;height:auto!important;min-height:440px!important}
 section.stock .tradingview-widget-container,section.stock .tradingview-widget-container__widget{height:100%!important;min-height:440px!important}
-</style></head>
+</style><script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+</head>
 <body>
 <div class="wrap">
 <div class="top"><div class="kicker">Andrew's live dashboard</div><div><span class="muted">Mountain time </span><span class="clock" id="clock">--:--</span></div></div>
@@ -268,6 +269,7 @@ section.stock .tradingview-widget-container,section.stock .tradingview-widget-co
 </div>
 <label class="radio-vol"><span>Vol</span><input id="fipVolume" max="1" min="0" step="0.05" type="range" value="0.6"/></label>
 <a class="radio-link" href="https://www.radiofrance.fr/fip" id="radioLink" rel="noopener noreferrer" target="_blank">Website</a>
+<a class="radio-link" href="https://music.apple.com/ca/station/apple-music-1/ra.978194965" rel="noopener noreferrer" target="_blank" title="Opens Apple Music 1 in a new tab">Apple Music 1 &#8599;</a>
 <audio id="fipAudio" preload="none"></audio>
 </div></div>
 <div class="footer">Weather and live feeds refresh every 15 minutes. Headlines fade every 15 seconds; click a label to refresh. ALM value refreshes every 60 seconds.</div>
@@ -495,22 +497,16 @@ updateWatchlist();setInterval(updateWatchlist,60000);
 /* ===== Radio player: 21 commercial-free stations, alphabetical ===== */
 (function(){
   const STATIONS=[
-    {id:'groovesalad', name:'SomaFM Groove Salad · chill electronic', short:'Groove Salad', color:'#0e7490', site:'https://somafm.com/groovesalad/',
-      urls:['https://ice5.somafm.com/groovesalad-128-mp3','https://ice6.somafm.com/groovesalad-128-mp3','https://ice2.somafm.com/groovesalad-128-mp3','https://ice1.somafm.com/groovesalad-128-mp3','https://ice5.somafm.com/groovesalad-128-aac']},
     {id:'rpmellow', name:'Radio Paradise Mellow · laid-back mix', short:'RP Mellow', color:'#4d7c0f', site:'https://radioparadise.com/',
       urls:['https://stream.radioparadise.com/mellow-320','https://stream.radioparadise.com/mellow-128']},
     {id:'fipjazz', name:'FIP Jazz · classic & modern jazz', short:'FIP Jazz', color:'#9d174d', site:'https://www.radiofrance.fr/fip/radio-jazz',
       urls:['https://icecast.radiofrance.fr/fipjazz-hifi.aac','https://icecast.radiofrance.fr/fipjazz-midfi.mp3']},
-    {id:'beatblender', name:'SomaFM Beat Blender · deep house, downtempo', short:'Beat Blender', color:'#6d28d9', site:'https://somafm.com/beatblender/',
-      urls:['https://ice5.somafm.com/beatblender-128-mp3','https://ice6.somafm.com/beatblender-128-mp3','https://ice2.somafm.com/beatblender-128-mp3','https://ice1.somafm.com/beatblender-128-mp3','https://ice5.somafm.com/beatblender-128-aac']},
     {id:'fip', name:'FIP · eclectic (the original)', short:'FIP', color:'#e2007a', site:'https://www.radiofrance.fr/fip',
       urls:['https://icecast.radiofrance.fr/fip-hifi.aac','https://icecast.radiofrance.fr/fip-midfi.mp3']},
     {id:'rpmain', name:'Radio Paradise · eclectic rock/indie/world', short:'Radio Paradise', color:'#15803d', site:'https://radioparadise.com/',
       urls:['https://stream.radioparadise.com/aac-320','https://stream.radioparadise.com/aac-128']},
     {id:'fipgroove', name:'FIP Groove · funk, soul, hip-hop', short:'FIP Groove', color:'#c2410c', site:'https://www.radiofrance.fr/fip/radio-groove',
       urls:['https://icecast.radiofrance.fr/fipgroove-hifi.aac','https://icecast.radiofrance.fr/fipgroove-midfi.mp3']},
-    {id:'indiepop', name:'SomaFM Indie Pop Rocks! · upbeat indie', short:'Indie Pop', color:'#be123c', site:'https://somafm.com/indiepop/',
-      urls:['https://ice5.somafm.com/indiepop-128-mp3','https://ice6.somafm.com/indiepop-128-mp3','https://ice2.somafm.com/indiepop-128-mp3','https://ice1.somafm.com/indiepop-128-mp3','https://ice5.somafm.com/indiepop-128-aac']},
     {id:'fipelectro', name:'FIP Electro · electronic, dance', short:'FIP Electro', color:'#1d4ed8', site:'https://www.radiofrance.fr/fip/radio-electro',
       urls:['https://icecast.radiofrance.fr/fipelectro-hifi.aac','https://icecast.radiofrance.fr/fipelectro-midfi.mp3']},
     {id:'rprock', name:'Radio Paradise Rock · high energy rock', short:'RP Rock', color:'#b91c1c', site:'https://radioparadise.com/',
@@ -525,18 +521,37 @@ updateWatchlist();setInterval(updateWatchlist,60000);
       urls:['https://icecast.radiofrance.fr/fipworld-hifi.aac','https://icecast.radiofrance.fr/fipworld-midfi.mp3']},
     {id:'rpglobal', name:'Radio Paradise Global · world, eclectic', short:'RP Global', color:'#166534', site:'https://radioparadise.com/',
       urls:['https://stream.radioparadise.com/global-320','https://stream.radioparadise.com/global-128']},
-    {id:'dronezone', name:'SomaFM Drone Zone · ambient, deep focus', short:'Drone Zone', color:'#1e3a8a', site:'https://somafm.com/dronezone/',
-      urls:['https://ice5.somafm.com/dronezone-128-mp3','https://ice6.somafm.com/dronezone-128-mp3','https://ice2.somafm.com/dronezone-128-mp3','https://ice1.somafm.com/dronezone-128-mp3','https://ice5.somafm.com/dronezone-128-aac']},
-    {id:'lush', name:'SomaFM Lush · mellow vocals, electronica', short:'Lush', color:'#7e22ce', site:'https://somafm.com/lush/',
-      urls:['https://ice5.somafm.com/lush-128-mp3','https://ice6.somafm.com/lush-128-mp3','https://ice2.somafm.com/lush-128-mp3','https://ice1.somafm.com/lush-128-mp3','https://ice5.somafm.com/lush-128-aac']},
-    {id:'secretagent', name:'SomaFM Secret Agent · lounge, spy-jazz', short:'Secret Agent', color:'#374151', site:'https://somafm.com/secretagent/',
-      urls:['https://ice5.somafm.com/secretagent-128-mp3','https://ice6.somafm.com/secretagent-128-mp3','https://ice2.somafm.com/secretagent-128-mp3','https://ice1.somafm.com/secretagent-128-mp3','https://ice5.somafm.com/secretagent-128-aac']},
-    {id:'bagel', name:'SomaFM BAGeL Radio · alternative rock', short:'BAGeL Radio', color:'#0369a1', site:'https://somafm.com/bagel/',
-      urls:['https://ice5.somafm.com/bagel-128-mp3','https://ice6.somafm.com/bagel-128-mp3','https://ice2.somafm.com/bagel-128-mp3','https://ice1.somafm.com/bagel-128-mp3','https://ice5.somafm.com/bagel-128-aac']},
-    {id:'poptron', name:'SomaFM PopTron · indie dance, electropop', short:'PopTron', color:'#ea580c', site:'https://somafm.com/poptron/',
-      urls:['https://ice5.somafm.com/poptron-128-mp3','https://ice6.somafm.com/poptron-128-mp3','https://ice2.somafm.com/poptron-128-mp3','https://ice1.somafm.com/poptron-128-mp3','https://ice5.somafm.com/poptron-128-aac']},
-    {id:'u80s', name:'SomaFM Underground 80s · new wave, synth-pop', short:'Underground 80s', color:'#c026d3', site:'https://somafm.com/u80s/',
-      urls:['https://ice5.somafm.com/u80s-128-mp3','https://ice6.somafm.com/u80s-128-mp3','https://ice2.somafm.com/u80s-128-mp3','https://ice1.somafm.com/u80s-128-mp3','https://ice5.somafm.com/u80s-128-aac']}
+
+    {id:'bbcr1', name:'BBC Radio 1 · current pop & new music', short:'BBC R1', color:'#d6006f', site:'https://www.bbc.co.uk/sounds',
+      urls:['https://as-hls-ww-live.akamaized.net/pool_01505109/live/ww/bbc_radio_one/bbc_radio_one.isml/bbc_radio_one-audio%3d96000.norewind.m3u8']},
+    {id:'bbcr1dance', name:'BBC Radio 1 Dance · dance & electronic', short:'BBC R1 Dance', color:'#7c3aed', site:'https://www.bbc.co.uk/sounds',
+      urls:['https://as-hls-ww-live.akamaized.net/pool_62063831/live/ww/bbc_radio_one_dance/bbc_radio_one_dance.isml/bbc_radio_one_dance-audio%3d96000.norewind.m3u8']},
+    {id:'bbc1xtra', name:'BBC Radio 1Xtra · hip-hop, R&B, grime', short:'BBC 1Xtra', color:'#111827', site:'https://www.bbc.co.uk/sounds',
+      urls:['https://as-hls-ww-live.akamaized.net/pool_92079267/live/ww/bbc_1xtra/bbc_1xtra.isml/bbc_1xtra-audio%3d96000.norewind.m3u8']},
+    {id:'bbcr2', name:'BBC Radio 2 · pop, rock & classics', short:'BBC R2', color:'#e2470b', site:'https://www.bbc.co.uk/sounds',
+      urls:['https://as-hls-ww-live.akamaized.net/pool_74208725/live/ww/bbc_radio_two/bbc_radio_two.isml/bbc_radio_two-audio%3d96000.norewind.m3u8']},
+    {id:'bbcr3', name:'BBC Radio 3 · classical & jazz', short:'BBC R3', color:'#9f1239', site:'https://www.bbc.co.uk/sounds',
+      urls:['https://as-hls-ww-live.akamaized.net/pool_23461179/live/ww/bbc_radio_three/bbc_radio_three.isml/bbc_radio_three-audio%3d96000.norewind.m3u8']},
+    {id:'bbc6music', name:'BBC Radio 6 Music · alternative & indie', short:'BBC 6 Music', color:'#0f766e', site:'https://www.bbc.co.uk/sounds',
+      urls:['https://as-hls-ww-live.akamaized.net/pool_81827798/live/ww/bbc_6music/bbc_6music.isml/bbc_6music-audio%3d96000.norewind.m3u8']},
+    {id:'swissjazz', name:'Radio Swiss Jazz · jazz, soul, blues', short:'Swiss Jazz', color:'#0e7490', site:'https://www.radioswissjazz.ch/en',
+      urls:['https://stream.srg-ssr.ch/srgssr/rsj/mp3/128','https://stream.srg-ssr.ch/m/rsj/mp3_128']},
+    {id:'swisspop', name:'Radio Swiss Pop · pop & soft rock', short:'Swiss Pop', color:'#be123c', site:'https://www.radioswisspop.ch/en',
+      urls:['https://stream.srg-ssr.ch/srgssr/rsp/mp3/128','https://stream.srg-ssr.ch/m/rsp/mp3_128']},
+    {id:'swissclassic', name:'Radio Swiss Classic · classical', short:'Swiss Classic', color:'#6d28d9', site:'https://www.radioswissclassic.ch/en',
+      urls:['https://stream.srg-ssr.ch/srgssr/rsc_de/mp3/128','https://stream.srg-ssr.ch/m/rsc_de/mp3_128']},
+    {id:'nts1', name:'NTS 1 · live eclectic DJ radio', short:'NTS 1', color:'#111827', site:'https://www.nts.live/',
+      urls:['https://stream-relay-geo.ntslive.net/stream?client=direct']},
+    {id:'ntspoolside', name:'NTS Poolside · balearic, boogie, sophisti-pop', short:'Poolside', color:'#0891b2', site:'https://www.nts.live/infinite-mixtapes/poolside',
+      urls:['https://stream-mixtape-geo.ntslive.net/mixtape4?client=direct']},
+    {id:'ntsslowfocus', name:'NTS Slow Focus · ambient, deep focus', short:'Slow Focus', color:'#1e3a8a', site:'https://www.nts.live/infinite-mixtapes/slow-focus',
+      urls:['https://stream-mixtape-geo.ntslive.net/mixtape?client=direct']},
+    {id:'ntslowkey', name:'NTS Low Key · lo-fi hip-hop, smooth R&B', short:'Low Key', color:'#7e22ce', site:'https://www.nts.live/infinite-mixtapes/low-key',
+      urls:['https://stream-mixtape-geo.ntslive.net/mixtape2?client=direct']},
+    {id:'ntsmemorylane', name:'NTS Memory Lane · psych, rock, soul classics', short:'Memory Lane', color:'#c2410c', site:'https://www.nts.live/infinite-mixtapes/memory-lane',
+      urls:['https://stream-mixtape-geo.ntslive.net/mixtape6?client=direct']},
+    {id:'nts4floor', name:'NTS 4 To The Floor · house & techno', short:'4 To Floor', color:'#1d4ed8', site:'https://www.nts.live/infinite-mixtapes/4-to-the-floor',
+      urls:['https://stream-mixtape-geo.ntslive.net/mixtape5?client=direct']}
   ];
   STATIONS.sort((a,b)=>a.name.localeCompare(b.name,'en',{sensitivity:'base'}));
   const audio=document.getElementById('fipAudio'), btn=document.getElementById('fipPlay'),
@@ -553,16 +568,26 @@ updateWatchlist();setInterval(updateWatchlist,60000);
   vol.value=localStorage.getItem('fipVolume')||0.6; audio.volume=vol.value;
   vol.addEventListener('input',()=>{audio.volume=vol.value;localStorage.setItem('fipVolume',vol.value)});
   function ui(playing,msg){btn.innerHTML=playing?'&#10074;&#10074;':'&#9654;';btn.classList.toggle('playing',playing);btn.setAttribute('aria-label',playing?'Pause':'Play');stat.textContent=msg}
+  let hls=null;
+  function clearHls(){if(hls){hls.destroy();hls=null}}
   async function start(){
     wantPlay=true;
     const u=current.urls[urlIdx];
-    // SomaFM servers: use the clean stream URL (no cache-busting query string)
-    audio.src=/somafm\.com/.test(u)?u:u+(u.includes('?')?'&':'?')+'t='+Date.now();
+    clearHls();
+    const isHls=/\.m3u8/i.test(u);
+    if(isHls&&!audio.canPlayType('application/vnd.apple.mpegurl')&&window.Hls&&Hls.isSupported()){
+      // BBC streams are HLS: play them through hls.js in Chrome / Edge / Firefox
+      hls=new Hls();hls.loadSource(u);hls.attachMedia(audio);
+      hls.on(Hls.Events.ERROR,(ev,d)=>{if(!d.fatal||!wantPlay)return;
+        if(urlIdx<current.urls.length-1){urlIdx++;start()}else{clearHls();ui(false,'Stream error — press play to retry')}});
+    }else{
+      audio.src=(isHls||/somafm\.com/.test(u))?u:u+(u.includes('?')?'&':'?')+'t='+Date.now();
+    }
     ui(true,'Connecting to '+current.short+'…');
     try{await audio.play();ui(true,'Live · '+current.short)}
     catch(e){if(urlIdx<current.urls.length-1){urlIdx++;return start()}ui(false,'Could not start '+current.short+' — try again')}
   }
-  function stop(){wantPlay=false;audio.pause();audio.removeAttribute('src');audio.load();ui(false,'Paused · press play for live')}
+  function stop(){wantPlay=false;clearHls();audio.pause();audio.removeAttribute('src');audio.load();ui(false,'Paused · press play for live')}
   btn.addEventListener('click',()=>audio.paused||!audio.getAttribute('src')?(urlIdx=0,start()):stop());
   sel.addEventListener('change',()=>{
     current=STATIONS.find(s=>s.id===sel.value); urlIdx=0; applyStation();
@@ -659,7 +684,7 @@ updateWatchlist();setInterval(updateWatchlist,60000);
   }
   const FIP={fip:[7,'fip'],fipjazz:[65,'fip_jazz'],fipgroove:[66,'fip_groove'],fipelectro:[74,'fip_electro'],fiprock:[64,'fip_rock'],fippop:[78,'fip_pop'],fipworld:[69,'fip_world']};
   const RP={rpmain:0,rpmellow:1,rprock:2,rpglobal:3};
-  const SOMA=['groovesalad','beatblender','indiepop','dronezone','lush','secretagent','bagel','poptron','u80s'];
+  const SOMA=[];
   async function fipNow(id){
     const [num,slug]=FIP[id];
     try{ // Radio France page API
@@ -676,6 +701,9 @@ updateWatchlist();setInterval(updateWatchlist,60000);
     if(FIP[id])return fipNow(id);
     if(id in RP){const d=await getJSON('https://api.radioparadise.com/api/now_playing?chan='+RP[id]);return {title:d.title,artist:d.artist}}
     if(SOMA.includes(id)){const d=await getJSON('https://somafm.com/songs/'+id+'.json');const x=d.songs[0];return {title:x.title,artist:x.artist}}
+    const BBC={bbcr1:'bbc_radio_one',bbcr1dance:'bbc_radio_one_dance',bbc1xtra:'bbc_1xtra',bbcr2:'bbc_radio_two',bbcr3:'bbc_radio_three',bbc6music:'bbc_6music'};
+    if(BBC[id]){const d=await getJSON('https://rms.api.bbc.co.uk/v2/services/'+BBC[id]+'/segments/latest?limit=1');const x=d.data[0];return {title:x.titles.secondary,artist:x.titles.primary}}
+    if(id==='nts1'){const d=await getJSON('https://www.nts.live/api/v2/live');const b=d.results[0].now;return {title:b.broadcast_title,artist:'NTS live show'}}
     if(id==='kexp'){const d=await getJSON('https://api.kexp.org/v2/plays/?limit=1');const x=d.results[0];
       if(x.play_type&&x.play_type!=='trackplay')return {title:'DJ talking / airbreak',artist:''};return {title:x.song,artist:x.artist}}
     throw new Error('unknown');
