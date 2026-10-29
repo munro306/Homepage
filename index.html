@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 
 <html lang="en">
-favicon.png
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>Andrew's Live Dashboard</title>
+<link rel="icon" type="image/png" href="favicon.png"/>
 <style>
 :root{--bg:#07111f;--card:#101d2c;--line:#20364d;--muted:#9bacbd;--text:#f7fbff;--green:#34d399}
 *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#07111f,#0d2237);color:var(--text)}
@@ -232,9 +232,9 @@ section.stock .tradingview-widget-container,section.stock .tradingview-widget-co
 <div class="finance-row"><span>GRRSP</span><strong>$15,617</strong></div>
 <div class="finance-row"><span>RESP</span><strong>$111,393</strong></div>
 <div class="finance-row"><span>ITF</span><strong>$23,158</strong></div>
-<div class="finance-row finance-total"><span>Savings</span><strong id="finSavings">$3,957,718</strong></div>
+<div class="finance-row finance-total"><span>Savings</span><strong id="finSavings">$3,957,717</strong></div>
 <div class="finance-row finance-property"><span>Canmore</span><strong>$319,000</strong></div>
-<div class="finance-row finance-total net-worth-row"><span>Net Worth</span><strong id="finNetWorth">$4,276,718</strong></div>
+<div class="finance-row finance-total net-worth-row"><span>Net Worth</span><strong id="finNetWorth">$4,276,717</strong></div>
 <div class="finance-live" id="finStatus" title="Click to set or change the Finnhub API key">Live: connecting…</div></div></section><section class="card weather-card">
 <div class="weather-city"><h3>Regina, Saskatchewan</h3><div class="weather-loading" id="reginaLoading">Loading weather…</div><div id="reginaWeather" style="display:none"></div><div class="error" id="reginaError"></div></div>
 <div class="weather-city"><h3>Canmore, Alberta</h3><div class="weather-loading" id="canmoreLoading">Loading weather…</div><div id="canmoreWeather" style="display:none"></div><div class="error" id="canmoreError"></div></div>
@@ -352,13 +352,15 @@ window.addEventListener('load',function(){
 </script><script>
 /* ===== Live ALM-linked financial summary =====
    Almonty value = shares x ALM (USD, Nasdaq) x USD->CAD.
+   Savings = Almonty + PEPP + Wolf RRSP + Wolf Mrkt + N-Reg. Fun + GRRSP
+   (RESP and ITF are the kids' accounts and are excluded). Net Worth = Savings + Canmore.
    Savings and Net Worth move by the same change as the Almonty row;
    every other row stays at the value you entered. */
 const FIN={
   shares:153101,
   baseAlmonty:2109689,   // Almonty value when the table was last typed in
-  baseSavings:3957718,
-  baseNetWorth:4276718,
+  baseSavings:3957717,
+  baseNetWorth:4276717,
   refreshMs:60000
 };
 const fmtCAD=v=>'$'+Math.round(v).toLocaleString('en-CA');
